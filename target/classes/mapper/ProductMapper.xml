@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.alijavapta.mapper.ProductMapper">
+    <resultMap type="com.example.alijavapta.domain.Product" id="productMap">
+        <id property="productID" column="productID"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="image" column="image"/>
+        <result property="status" column="productStatus"/>
+        <association property="category" column="categoryID"
+                     javaType="com.example.alijavapta.domain.ProductCategory"
+                     resultMap="productCategoryMap"/>
+        <association property="variantList" column="productID"
+                     foreignColumn="productID"
+                     javaType="java.util.List"
+                     resultMap="productVariantMap"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.ProductCategory" id="productCategoryMap">
+        <id property="categoryID" column="categoryID"/>
+        <result property="name" column="productCategoryName"/>
+        <result property="status" column="productCategoryStatus"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.ProductVariant"
+               id="productVariantMap">
+        <id property="productVariantID" column="productVariantID"/>
+        <result property="name" column="productVariantName"/>
+        <result property="value" column="value"/>
+        <result property="image" column="productVariantImage"/>
+        <result property="price" column="price"/>
+        <result property="status" column="productVariantStatus"/>
+    </resultMap>
+    <select id="ListProducts" resultMap="productMap"
+            parameterType="com.example.alijavapta.domain.Condition">
+        SELECT *, t1.status as productStatus, t2.status as
+            productCategoryStatus, t3.status as productVariantStatus, t3.name
+            as productVariantName, t3.image as productVariantImage
+        FROM products t1
+        LEFT JOIN product_categories t2 ON t1.categoryID = t2.categoryID
+        LEFT JOIN product_variants t3 on t1.productID = t3.productID
+        <trim prefix="WHERE" prefixOverrides="AND | OR ">
+            <if test="title != null">
+                AND t1.title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="title != null">
+                AND t1.title LIKE CONCAT('%', #{title}, '%')
+            </if>
+            <if test="categoryID != -1">
+                AND t2.categoryID = #{categoryID}
+            </if>
+        </trim>
+    </select>
+    <select id="ListProductVariants" resultMap="productVariantMap"
+            parameterType="com.example.alijavapta.domain.Condition">
+        SELECT * FROM products t1
+        LEFT JOIN product_variants t2 ON t1.productID = t2.productID
+        <trim prefix="WHERE" prefixOverrides="AND | OR ">
+            t1.productID = #{productID}
+            <if test="status != -1" >
+                AND t2.status = #{status}
+            </if>
+        </trim>
+    </select>
+</mapper>

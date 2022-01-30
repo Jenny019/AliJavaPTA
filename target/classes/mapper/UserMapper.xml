@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.alijavapta.mapper.UserMapper">
+    <resultMap type="com.example.alijavapta.domain.User" id="userMap">
+        <id property="id" column="userID"/>
+        <result property="userName" column="userName"/>
+        <result property="password" column="password"/>
+        <result property="phone" column="phone"/>
+        <result property="email" column="email"/>
+        <result property="avatar" column="avatar"/>
+        <result property="introduction" column="introduction"/>
+        <result property="status" column="userStatus"/>
+        <association property="addressList" column="userID"
+                     foreignColumn="userID"
+                     javaType="java.util.List"
+                     resultMap="addressMap" />
+        <association property="records" column="userID" foreignColumn="userID"
+                     javaType="java.util.List"
+                     resultMap="couponRecordMap" />
+        <association property="usersRoles" column="userID"
+                     foreignColumn="userID"
+                     javaType="java.util.List"
+                     resultMap="usersRolesMap" />
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.UserRole" id="usersRolesMap">
+        <id column="usersRolesID" property="usersRolesID"/>
+        <association property="roles" column="roleID"
+                     foreignColumn="roleID"
+                     javaType="java.util.List"
+                     resultMap="roleMap" />
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.Role" id="roleMap">
+        <id property="roleID" column="roleID" />
+        <result property="name" column="roleName"  />
+        <result property="status" column="roleStatus"  />
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.CouponRecord" id="couponRecordMap">
+        <id property="couponRecordID" column="couponRecordID"/>
+        <result property="createdAt" column="createdAt"
+                javaType="java.util.Date"/>
+        <association property="coupon" foreignColumn="couponID"
+                     javaType="com.example.alijavapta.domain.Coupon"
+                     resultMap="couponMap"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.Address" id="addressMap">
+        <id property="addressID" column="addressID"/>
+        <result property="country" column="country"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="street" column="street"/>
+        <result property="building" column="building"/>
+        <result property="postalCode" column="postalCode"/>
+        <result property="default" column="default"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.Coupon" id="couponMap">
+        <id property="couponID" column="couponID"/>
+        <result property="name" column="couponName"/>
+        <result property="condition" column="condition"/>
+        <result property="amount" column="amount"/>
+        <result property="startDate" column="startDate"/>
+        <result property="endDate" column="endDate"/>
+        <result property="description" column="description"/>
+        <result property="prerequisite" column="prerequisite"/>
+        <result property="status" column="couponStatus"/>
+        <association property="category" column="categoryID"
+                     javaType="com.example.alijavapta.domain.CouponCategory"
+                     resultMap="couponCategoryMap"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.CouponCategory" id="couponCategoryMap">
+        <id property="categoryID" column="categoryID"/>
+        <result property="name" column="couponCategoryName"/>
+        <result property="status" column="couponCategoryStatus"/>
+    </resultMap>
+    <select id="ListUsers" resultMap="userMap">
+        SELECT *, t5.name as couponCategoryName, t1.status as userStatus, t4.status
+            as couponStatus, t5.status as couponCategoryStatus, t4.name as
+            couponName, t8.name as roleName, t8.status as roleStatus
+        FROM
+            users t1
+        LEFT JOIN coupon_records t3 on t3.userID = t1.userID
+        LEFT JOIN coupons t4 on t4.couponID = t3.couponID
+        LEFT JOIN coupon_categories t5 ON t5.categoryID = t4.categoryID
+        LEFT JOIN addresses t6 ON T1.userID = t6.userID
+        LEFT JOIN users_roles t7 ON t7.userID = t1.userID
+        LEFT JOIN roles t8 ON t8.roleID = t7.roleID
+    </select>
+    <select id="ListCoupons" resultType="java.util.List"
+            resultMap="couponRecordMap"
+            parameterType="com.example.alijavapta.domain.Condition">
+        SELECT *, t5.name as couponName, t1.status as userStatus, t4.status
+            as couponStatus, t5.status as couponCategoryStatus,
+               t4.name as couponName
+        FROM users t1
+        LEFT JOIN coupon_records t3 on t3.userID = t1.userID
+        LEFT JOIN coupons t4 on t4.couponID = t3.couponID
+        LEFT JOIN coupon_categories t5 ON t5.categoryID = t4.categoryID
+        WHERE t1.userID = #{userID}
+        <if test="status != -1">
+            AND status = #{status}
+        </if>
+        <if test="startDate != null">
+            AND t4.startDate &lt; #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND t4.endDate &gt; #{endDate}
+        </if>
+    </select>
+    <select id="ListAddresses" resultType="java.util.List"
+            resultMap="addressMap"
+            parameterType="com.example.alijavapta.domain.Condition">
+        SELECT * FROM users t1
+        LEFT JOIN addresses t2 ON T1.userID = t2.userID
+        WHERE t1.userID = #{userID}
+    </select>
+    <select id="ListRoles" resultType="java.util.List"
+            resultMap="roleMap"
+            parameterType="com.example.alijavapta.domain.Condition">
+        SELECT *, t3.status as roleStatus, t3.name as roleName FROM users t1
+        LEFT JOIN users_roles t2 ON T1.userID = t2.userID
+        LEFT JOIN roles t3 ON T2.roleID = T3.roleID
+        WHERE t1.userID = #{userID} and t3.status = 1
+    </select>
+</mapper>
