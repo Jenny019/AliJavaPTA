@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.alijavapta.mapper.OrderMapper">
+    <resultMap type="com.example.alijavapta.domain.Order" id="orderMap">
+        <id property="orderID" column="orderID"/>
+        <result property="shipping" column="shipping"/>
+        <result property="trackingNumber" column="trackingNumber"/>
+        <result property="trackingCompany" column="trackingCompany"/>
+        <result property="subtotal" column="subtotal"/>
+        <result property="total" column="total"/>
+        <result property="note" column="note"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+        <result property="status" column="status"/>
+        <association property="address" column="addressID"
+                     javaType="com.example.alijavapta.domain.Address"
+                     resultMap="addressMap"/>
+        <association property="coupon" column="couponID"
+                     javaType="com.example.alijavapta.domain.Coupon"
+                     resultMap="couponMap"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.Coupon" id="couponMap">
+        <id property="couponID" column="couponID"/>
+        <result property="name" column="couponName"/>
+        <result property="condition" column="condition"/>
+        <result property="amount" column="amount"/>
+        <result property="startDate" column="startDate"/>
+        <result property="endDate" column="endDate"/>
+        <result property="description" column="description"/>
+        <result property="prerequisite" column="prerequisite"/>
+        <result property="status" column="couponStatus"/>
+        <association property="category" column="categoryID"
+                     javaType="com.example.alijavapta.domain.CouponCategory"
+                     resultMap="couponCategoryMap"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.Address" id="addressMap">
+        <id property="addressID" column="addressID"/>
+        <result property="country" column="country"/>
+        <result property="province" column="province"/>
+        <result property="city" column="city"/>
+        <result property="street" column="street"/>
+        <result property="building" column="building"/>
+        <result property="postalCode" column="postalCode"/>
+        <result property="default" column="default"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.CouponCategory" id="couponCategoryMap">
+        <id property="categoryID" column="categoryID"/>
+        <result property="name" column="couponCategoryName"/>
+        <result property="status" column="couponCategoryStatus"/>
+    </resultMap>
+    <select id="ListOrders" resultMap="orderMap"
+            parameterType="com.example.alijavapta.domain.Condition">
+        SELECT *, t4.status as couponCategoryStatus,
+            t4.name as couponCategoryName, t3.status as couponStatus,
+            t3.name as couponName
+        FROM orders t1
+        LEFT JOIN addresses t2 on t1.addressID = t2.addressID
+        LEFT JOIN coupons t3 on t1.couponID = t3.couponID
+        LEFT JOIN coupon_categories t4 on t3.categoryID = t4.categoryID
+        WHERE t1.userID = #{userID}
+        <if test="status != -1">
+            AND t1.status = #{status}
+        </if>
+        <if test="startDate != null">
+            AND t1.createdAt &gt; #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND t1.createdAt &lt; #{endDate}
+        </if>
+    </select>
+</mapper>
