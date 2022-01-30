@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  *
  */
 @Configuration
-@EnableSolrRepositories(basePackages = "com.example.alijavapta.dao")
+@EnableSolrRepositories(basePackages = "com.example.alijavapta.mapper")
 @EntityScan(basePackages = "com.example.alijavapta.entity")
 @EnableTransactionManagement
 public class SolrConfig {
