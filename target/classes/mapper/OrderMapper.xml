@@ -20,6 +20,10 @@
         <association property="coupon" column="couponID"
                      javaType="com.example.alijavapta.domain.Coupon"
                      resultMap="couponMap"/>
+        <association property="lineItemsList" column="orderID"
+                     foreignColumn="orderID"
+                     javaType="java.util.List"
+                     resultMap="couponMap"/>
     </resultMap>
     <resultMap type="com.example.alijavapta.domain.Coupon" id="couponMap">
         <id property="couponID" column="couponID"/>
@@ -50,6 +54,45 @@
         <result property="name" column="couponCategoryName"/>
         <result property="status" column="couponCategoryStatus"/>
     </resultMap>
+    <resultMap type="com.example.alijavapta.domain.LineItems" id="lineItemMap">
+        <id property="lineItemID" column="lineItemID"/>
+        <result property="quantity" column="quantity"/>
+        <association property="product" column="productID"
+                     foreignColumn="productID" resultMap="productMap"/>
+        <association property="productVariant" column="productVariantID"
+                     foreignColumn="productVariantID"
+                     resultMap="productVariantMap"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.Product" id="productMap">
+        <id property="productID" column="productID"/>
+        <result property="title" column="title"/>
+        <result property="description" column="description"/>
+        <result property="image" column="image"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+        <result property="status" column="productStatus"/>
+        <association property="category" column="categoryID"
+                     javaType="com.example.alijavapta.domain.ProductCategory"
+                     resultMap="productCategoryMap"/>
+        <association property="variantList" column="productID"
+                     foreignColumn="productID"
+                     javaType="java.util.List"
+                     resultMap="productVariantMap"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.ProductCategory" id="productCategoryMap">
+        <id property="categoryID" column="categoryID"/>
+        <result property="name" column="productCategoryName"/>
+        <result property="status" column="productCategoryStatus"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.ProductVariant"
+               id="productVariantMap">
+        <id property="productVariantID" column="productVariantID"/>
+        <result property="name" column="productVariantName"/>
+        <result property="value" column="value"/>
+        <result property="image" column="productVariantImage"/>
+        <result property="price" column="price"/>
+        <result property="status" column="productVariantStatus"/>
+    </resultMap>
     <select id="ListOrders" resultMap="orderMap"
             parameterType="com.example.alijavapta.domain.Condition">
         SELECT *, t4.status as couponCategoryStatus,
@@ -70,4 +113,39 @@
             AND t1.createdAt &lt; #{endDate}
         </if>
     </select>
+    <insert id="CreateOrder"
+            parameterType="com.example.alijavapta.domain.Order">
+        INSERT INTO orders (userID, addressID, couponID, shipping,
+                            trackingNumber, trackingCompany, subtotal,
+                            createdAt, updatedAt, total, note, status)
+        VALUE (#{user.id}, #{address.addressID}, #{coupon.couponID},
+               #{shipping}, #{trackingNumber}, #{trackingCompany},
+               #{subtotal}, NOW(), NOW(), #{total}, #{note}, 0)
+    </insert>
+    <update id="UpdateOrder"
+            parameterType="com.example.alijavapta.domain.Order">
+        UPDATE users
+        <trim prefix="SET" suffixOverrides=",">
+            updatedAt = NOW(),
+            <if test="shipping != null" >
+                shipping = #{shipping},
+            </if>
+            <if test="total != null" >
+                total = #{total},
+            </if>
+            <if test="trackingNumber != null" >
+                trackingNumber = #{trackingNumber},
+            </if>
+            <if test="trackingCompany != null" >
+                trackingCompany = #{trackingCompany},
+            </if>
+            <if test="status != null" >
+                status = #{status}
+            </if>
+        </trim>
+        WHERE orderID = #{orderID}
+    </update>
+    <delete id="DeleteOrder" parameterType="com.example.alijavapta.domain.Order">
+        UPDATE orders SET status=5 WHERE orderID = #{orderID}
+    </delete>
 </mapper>

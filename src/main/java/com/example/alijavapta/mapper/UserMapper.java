@@ -9,4 +9,10 @@ public interface UserMapper {
     List<CouponRecord> ListCoupons(Condition condition);
     List<Address> ListAddresses(Condition condition);
     List<Role> ListRoles(Condition condition);
+
+    int CreateUser(User user);
+    int UpdateUser(User user);
+    int DeleteUser(User user);
+
+    User Login(User user);
 }

@@ -12,6 +12,7 @@
         <result property="avatar" column="avatar"/>
         <result property="introduction" column="introduction"/>
         <result property="status" column="userStatus"/>
+        <result property="token" column="token"/>
         <association property="addressList" column="userID"
                      foreignColumn="userID"
                      javaType="java.util.List"
@@ -122,4 +123,44 @@
         LEFT JOIN roles t3 ON T2.roleID = T3.roleID
         WHERE t1.userID = #{userID} and t3.status = 1
     </select>
+    <select id="Login"
+            parameterType="com.example.alijavapta.domain.User"
+            resultMap="userMap">
+        SELECT * FROM users WHERE userName = #{userName} and password =
+                                                             #{password}
+    </select>
+    <insert id="CreateUser"
+            parameterType="com.example.alijavapta.domain.User">
+        INSERT users (userName, password, email, phone, introduction, avatar)
+         VALUE (#{userName}, #{password}, #{email}, #{phone},
+        #{introduction}, #{avatar})
+    </insert>
+    <update id="UpdateUser" parameterType="com.example.alijavapta.domain.User">
+        UPDATE users
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="userName != null" >
+                userName = #{userName},
+            </if>
+            <if test="password != null" >
+                password = #{password},
+            </if>
+            <if test="phone != null" >
+                phone = #{phone},
+            </if>
+            <if test="email != null" >
+                email = #{email},
+            </if>
+            <if test="introduction != null" >
+                introduction = #{introduction},
+            </if>
+            <if test="avatar != null" >
+                avatar = #{avatar},
+            </if>
+        </trim>
+        WHERE userID = #{id}
+    </update>
+    <delete id="DeleteUser"
+            parameterType="com.example.alijavapta.domain.User">
+        DELETE FROM users WHERE userID = #{id}
+    </delete>
 </mapper>

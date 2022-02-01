@@ -7,7 +7,7 @@ public class ProductVariant {
     private String image;
     private float price;
     private Product product;
-    private int status = -1;
+    private int status = -1; // 0 待上架 1 上架 2 删除
 
     public long getProductVariantID() {
         return productVariantID;

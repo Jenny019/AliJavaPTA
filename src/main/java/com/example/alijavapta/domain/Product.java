@@ -1,5 +1,6 @@
 package com.example.alijavapta.domain;
 
+import java.util.Date;
 import java.util.List;
 
 public class Product {
@@ -8,11 +9,29 @@ public class Product {
     private ProductCategory category;
     private String description;
     private String image;
-    private int status = -1;
+    private Date createdAt;
+    private Date updatedAt;
+    private int status = -1; // 0 待上架 1 上架 2 删除
     private List<ProductVariant> variantList;
 
     public List<ProductVariant> getVariantList() {
         return variantList;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
     }
 
     public void setVariantList(List<ProductVariant> variantList) {

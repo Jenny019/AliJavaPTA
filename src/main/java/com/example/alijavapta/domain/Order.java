@@ -1,6 +1,7 @@
 package com.example.alijavapta.domain;
 
 import java.util.Date;
+import java.util.List;
 
 public class Order {
     private long orderID;
@@ -15,7 +16,16 @@ public class Order {
     private String note;
     private Date createdAt;
     private Date updatedAt;
-    private int status = -1;
+    private int status = -1; // 0 待付款 1 已付款待发货 2 已发货待收货 3 确认收货 4 退货 5 已删除
+    private List<LineItems> lineItemsList;
+
+    public List<LineItems> getLineItemsList() {
+        return lineItemsList;
+    }
+
+    public void setLineItemsList(List<LineItems> lineItemsList) {
+        this.lineItemsList = lineItemsList;
+    }
 
     public long getOrderID() {
         return orderID;

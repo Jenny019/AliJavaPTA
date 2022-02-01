@@ -23,6 +23,24 @@ public class User {
     private String avatar;
     private int status = -1;
     private List<UserRole> usersRoles;
+    private List<Role> roles;
+    private String token;
+
+    public List<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(List<Role> roles) {
+        this.roles = roles;
+    }
+
+    public String getToken() {
+        return token;
+    }
+
+    public void setToken(String token) {
+        this.token = token;
+    }
 
     public List<UserRole> getUsersRoles() {
         return usersRoles;
@@ -70,6 +88,10 @@ public class User {
 
     public void setAddressList(List<Address> addressList) {
         this.addressList = addressList;
+    }
+
+    public User() {
+
     }
 
     public User(String userName, String password) {

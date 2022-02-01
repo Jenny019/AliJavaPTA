@@ -9,6 +9,8 @@
         <result property="description" column="description"/>
         <result property="image" column="image"/>
         <result property="status" column="productStatus"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
         <association property="category" column="categoryID"
                      javaType="com.example.alijavapta.domain.ProductCategory"
                      resultMap="productCategoryMap"/>
@@ -35,7 +37,8 @@
             parameterType="com.example.alijavapta.domain.Condition">
         SELECT *, t1.status as productStatus, t2.status as
             productCategoryStatus, t3.status as productVariantStatus, t3.name
-            as productVariantName, t3.image as productVariantImage
+            as productVariantName, t3.image as productVariantImage,
+               t2.name as productCategoryName
         FROM products t1
         LEFT JOIN product_categories t2 ON t1.categoryID = t2.categoryID
         LEFT JOIN product_variants t3 on t1.productID = t3.productID
@@ -43,8 +46,8 @@
             <if test="title != null">
                 AND t1.title LIKE CONCAT('%', #{title}, '%')
             </if>
-            <if test="title != null">
-                AND t1.title LIKE CONCAT('%', #{title}, '%')
+            <if test="status != -1">
+                AND t1.status = #{status}
             </if>
             <if test="categoryID != -1">
                 AND t2.categoryID = #{categoryID}
@@ -62,4 +65,38 @@
             </if>
         </trim>
     </select>
+    <insert id="CreateProduct"
+            parameterType="com.example.alijavapta.domain.Product">
+        INSERT INTO products (title, categoryID, description, image,
+                              createdAt, updatedAt, status)
+            VALUE (#{title}, #{category.categoryID}, #{description},
+                   #{image}, NOW(), NOW(), 0)
+    </insert>
+    <update id="UpdateProduct"
+            parameterType="com.example.alijavapta.domain.Product">
+        UPDATE products
+        <trim prefix="SET" suffixOverrides=",">
+            updatedAt = NOW(),
+            <if test="title != null" >
+                title = #{title},
+            </if>
+            <if test="category != null" >
+                categoryID = #{category.categoryID},
+            </if>
+            <if test="description != null" >
+                description = #{description},
+            </if>
+            <if test="image != null" >
+                image = #{image},
+            </if>
+            <if test="status != null" >
+                status = #{status}
+            </if>
+        </trim>
+        WHERE productID = #{productID}
+    </update>
+    <delete id="DeleteProduct" parameterType="com.example.alijavapta.domain.Product">
+        UPDATE product_variants SET status = 2 WHERE productID = #{productID};
+        UPDATE products SET status = 2 WHERE productID = #{productID};
+    </delete>
 </mapper>
