@@ -3,10 +3,19 @@ package com.example.alijavapta.domain;
 import java.util.Date;
 
 public class CouponRecord {
-    private long couponRecordID;
+    private String couponRecordID;
     private User user;
     private Date createdAt;
     private Coupon coupon;
+    private Date updatedAt;
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     public Coupon getCoupon() {
         return coupon;
@@ -16,11 +25,11 @@ public class CouponRecord {
         this.coupon = coupon;
     }
 
-    public long getCouponRecordID() {
+    public String getCouponRecordID() {
         return couponRecordID;
     }
 
-    public void setCouponRecordID(long couponRecordID) {
+    public void setCouponRecordID(String couponRecordID) {
         this.couponRecordID = couponRecordID;
     }
 

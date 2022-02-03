@@ -1,5 +1,6 @@
 package com.example.alijavapta.domain;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.solr.client.solrj.beans.Field;
@@ -9,7 +10,7 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
 @SolrDocument(collection = "users")
 public class User {
     @Id
-    private Integer id;
+    private String id;
     @Field
     private String userName;
     private String password;
@@ -25,6 +26,24 @@ public class User {
     private List<UserRole> usersRoles;
     private List<Role> roles;
     private String token;
+    private Date createdAt;
+    private Date updatedAt;
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     public List<Role> getRoles() {
         return roles;
@@ -99,11 +118,11 @@ public class User {
         this.password = password;
     }
 
-    public Integer getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -1,19 +1,39 @@
 package com.example.alijavapta.domain;
 
+import java.util.Date;
+
 public class ProductVariant {
-    private long productVariantID;
+    private String productVariantID;
     private String name;
     private String value;
     private String image;
     private float price;
     private Product product;
     private int status = -1; // 0 待上架 1 上架 2 删除
+    private Date createdAt;
+    private Date updatedAt;
 
-    public long getProductVariantID() {
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getProductVariantID() {
         return productVariantID;
     }
 
-    public void setProductVariantID(long productVariantID) {
+    public void setProductVariantID(String productVariantID) {
         this.productVariantID = productVariantID;
     }
 

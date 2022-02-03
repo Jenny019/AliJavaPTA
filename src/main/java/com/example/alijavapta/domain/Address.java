@@ -1,7 +1,9 @@
 package com.example.alijavapta.domain;
 
+import java.util.Date;
+
 public class Address {
-    private long addressID;
+    private String addressID;
     private User user;
     private String country;
     private String province;
@@ -10,6 +12,24 @@ public class Address {
     private String building;
     private String postalCode;
     private boolean Default;
+    private Date createdAt;
+    private Date updatedAt;
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
 
     public boolean isDefault() {
         return Default;
@@ -19,11 +39,11 @@ public class Address {
         Default = aDefault;
     }
 
-    public long getAddressID() {
+    public String getAddressID() {
         return addressID;
     }
 
-    public void setAddressID(long addressID) {
+    public void setAddressID(String addressID) {
         this.addressID = addressID;
     }
 

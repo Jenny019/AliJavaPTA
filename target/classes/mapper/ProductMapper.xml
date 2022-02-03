@@ -67,9 +67,11 @@
     </select>
     <insert id="CreateProduct"
             parameterType="com.example.alijavapta.domain.Product">
-        INSERT INTO products (title, categoryID, description, image,
+        INSERT INTO products (productID, title, categoryID, description, image,
                               createdAt, updatedAt, status)
-            VALUE (#{title}, #{category.categoryID}, #{description},
+            VALUE (CONCAT(DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+                          LPAD(nextval('products'), 6, 0)), #{title},
+                   #{category.categoryID}, #{description},
                    #{image}, NOW(), NOW(), 0)
     </insert>
     <update id="UpdateProduct"

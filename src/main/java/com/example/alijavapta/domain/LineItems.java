@@ -1,17 +1,37 @@
 package com.example.alijavapta.domain;
 
+import java.util.Date;
+
 public class LineItems {
-    private long lineItemID;
+    private String lineItemID;
     private Product product;
     private ProductVariant productVariant;
     private int quantity;
     private Order order;
+    private Date createdAt;
+    private Date updatedAt;
 
-    public long getLineItemID() {
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getLineItemID() {
         return lineItemID;
     }
 
-    public void setLineItemID(long lineItemID) {
+    public void setLineItemID(String lineItemID) {
         this.lineItemID = lineItemID;
     }
 

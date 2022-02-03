@@ -1,15 +1,35 @@
 package com.example.alijavapta.domain;
 
+import java.util.Date;
+
 public class CouponCategory {
-    private long categoryID;
+    private String categoryID;
     private String name;
     private int status = -1;
+    private Date createdAt;
+    private Date updatedAt;
 
-    public long getCategoryID() {
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public Date getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(Date updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public String getCategoryID() {
         return categoryID;
     }
 
-    public void setCategoryID(long categoryID) {
+    public void setCategoryID(String categoryID) {
         this.categoryID = categoryID;
     }
 

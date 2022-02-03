@@ -131,9 +131,11 @@
     </select>
     <insert id="CreateUser"
             parameterType="com.example.alijavapta.domain.User">
-        INSERT users (userName, password, email, phone, introduction, avatar)
-         VALUE (#{userName}, #{password}, #{email}, #{phone},
-        #{introduction}, #{avatar})
+        INSERT users (userID, userName, password, email, phone, introduction,
+        avatar)
+         VALUE (CONCAT(DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+         LPAD(nextval('users'), 6, 0)), #{userName}, #{password}, #{email},
+        #{phone}, #{introduction}, #{avatar})
     </insert>
     <update id="UpdateUser" parameterType="com.example.alijavapta.domain.User">
         UPDATE users

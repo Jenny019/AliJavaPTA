@@ -3,7 +3,7 @@ package com.example.alijavapta.domain;
 import java.util.Date;
 
 public class Condition {
-    private long userID = -1;
+    private String userID;
     private int limit;
     private int offset;
     private int status = -1;
@@ -37,11 +37,11 @@ public class Condition {
         this.categoryID = categoryID;
     }
 
-    public long getUserID() {
+    public String getUserID() {
         return userID;
     }
 
-    public void setUserID(long userID) {
+    public void setUserID(String userID) {
         this.userID = userID;
     }
 

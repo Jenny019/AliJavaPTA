@@ -115,10 +115,12 @@
     </select>
     <insert id="CreateOrder"
             parameterType="com.example.alijavapta.domain.Order">
-        INSERT INTO orders (userID, addressID, couponID, shipping,
+        INSERT INTO orders (orderID, userID, addressID, couponID, shipping,
                             trackingNumber, trackingCompany, subtotal,
                             createdAt, updatedAt, total, note, status)
-        VALUE (#{user.id}, #{address.addressID}, #{coupon.couponID},
+        VALUE (CONCAT(DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+                      LPAD(nextval('users'), 6, 0)), #{user.id},
+               #{address.addressID}, #{coupon.couponID},
                #{shipping}, #{trackingNumber}, #{trackingCompany},
                #{subtotal}, NOW(), NOW(), #{total}, #{note}, 0)
     </insert>

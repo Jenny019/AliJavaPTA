@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Product {
-    private long productID;
+    private String productID;
     private String title;
     private ProductCategory category;
     private String description;
@@ -38,11 +38,11 @@ public class Product {
         this.variantList = variantList;
     }
 
-    public long getProductID() {
+    public String getProductID() {
         return productID;
     }
 
-    public void setProductID(long productID) {
+    public void setProductID(String productID) {
         this.productID = productID;
     }
 

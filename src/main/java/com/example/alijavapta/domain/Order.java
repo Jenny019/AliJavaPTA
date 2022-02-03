@@ -4,7 +4,7 @@ import java.util.Date;
 import java.util.List;
 
 public class Order {
-    private long orderID;
+    private String orderID;
     private User user;
     private Address address;
     private Coupon coupon;
@@ -27,11 +27,11 @@ public class Order {
         this.lineItemsList = lineItemsList;
     }
 
-    public long getOrderID() {
+    public String getOrderID() {
         return orderID;
     }
 
-    public void setOrderID(long orderID) {
+    public void setOrderID(String orderID) {
         this.orderID = orderID;
     }
 

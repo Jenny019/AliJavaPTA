@@ -3,7 +3,7 @@ package com.example.alijavapta.domain;
 import java.util.Date;
 
 public class Coupon {
-    private long couponID;
+    private String couponID;
     private CouponCategory category;
     private String name;
     private float condition;
@@ -13,12 +13,22 @@ public class Coupon {
     private String description;
     private String prerequisite;
     private int status = -1;
+    private Date createdAt;
+    private Date updatedAt;
 
-    public long getCouponID() {
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public String getCouponID() {
         return couponID;
     }
 
-    public void setCouponID(long couponID) {
+    public void setCouponID(String couponID) {
         this.couponID = couponID;
     }
 
