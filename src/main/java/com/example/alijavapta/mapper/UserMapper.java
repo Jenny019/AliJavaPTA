@@ -12,6 +12,7 @@ public interface UserMapper {
 
     int CreateUser(User user);
     int UpdateUser(User user);
+    int ResetPassword(User user);
     int DeleteUser(User user);
 
     User GetUser(User user);

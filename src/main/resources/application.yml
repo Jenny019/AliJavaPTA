@@ -45,6 +45,18 @@ spring:
   max-pool-prepared-statement-per-connection-size: 20
   use-global-data-source-stat: true
   connect-properties: druid.stat.mergeSql=true;druid.stat.slowSqlMillis=5000
+ redis:
+  database: 0
+  host: 127.0.0.1
+  port: 6379
+  password: # 如果未单独配置默认为空即可
+  timeout: 1000
+  jedis:
+   pool:
+    max-active: 8
+    max-wait: -1
+    max-idle: 8
+    min-idle: 0
 mybatis:
  mapper-locations: classpath*:mapper/*Mapper.xml
  level:

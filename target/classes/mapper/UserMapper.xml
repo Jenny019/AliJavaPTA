@@ -169,6 +169,16 @@
         </trim>
         WHERE userID = #{id}
     </update>
+    <update id="ResetPassword"
+            parameterType="com.example.alijavapta.domain.User">
+        UPDATE users
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="password != null" >
+                password = #{password},
+            </if>
+        </trim>
+        WHERE phone = #{phone}
+    </update>
     <delete id="DeleteUser"
             parameterType="com.example.alijavapta.domain.User">
         DELETE FROM users WHERE userID = #{id}

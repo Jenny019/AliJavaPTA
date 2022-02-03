@@ -1,8 +1,12 @@
 package com.example.alijavapta.controller;
 
+import com.example.alijavapta.config.RedisKey;
 import com.example.alijavapta.config.ResponseCode;
 import com.example.alijavapta.domain.*;
 import com.example.alijavapta.mapper.UserMapper;
+import com.example.alijavapta.utils.IGlobalCache;
+import com.example.alijavapta.utils.SMSService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -17,6 +21,9 @@ import java.security.NoSuchAlgorithmException;
 public class UserController {
     @Resource
     private UserMapper userMapper;
+
+    @Autowired
+    private IGlobalCache globalCache;
 
     @RequestMapping(value = "/findAllUser")
     public Iterable<User> getAllUser() {
@@ -70,18 +77,43 @@ public class UserController {
             return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
                     "userName or phone exists. Please login.");
         }
-        MessageDigest md5 = MessageDigest.getInstance("MD5");
-        md5.update(StandardCharsets.UTF_8.encode(user.getPassword()));
-        String encrypted = String.format("%032x", new BigInteger(1,
-                md5.digest()));
-        user.setPassword(encrypted);
-        userMapper.CreateUser(user);
-        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", null);
+        String key =
+                RedisKey.REGISTER_USER_KEY.toString() + '-' + user.getPhone();
+        if (user.getCode() != null && user.getCode().equals(globalCache.get(key))) {
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            md5.update(StandardCharsets.UTF_8.encode(user.getPassword()));
+            String encrypted = String.format("%032x", new BigInteger(1,
+                    md5.digest()));
+            user.setPassword(encrypted);
+            userMapper.CreateUser(user);
+            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", null);
+        } else {
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+                    "Verification codes do not match.");
+        }
     }
 
-    @RequestMapping("/updateUser")
+    @PutMapping("/updateUser")
     public int updateUser(User user) {
         return userMapper.UpdateUser(user);
+    }
+
+    @PutMapping("/resetPassword")
+    public Response resetPassword(@RequestBody User user) throws NoSuchAlgorithmException {
+        String key =
+                RedisKey.FORGET_PASSWORD.toString() + '-' + user.getPhone();
+        if (user.getCode() != null && user.getCode().equals(globalCache.get(key))) {
+            MessageDigest md5 = MessageDigest.getInstance("MD5");
+            md5.update(StandardCharsets.UTF_8.encode(user.getPassword()));
+            String encrypted = String.format("%032x", new BigInteger(1,
+                    md5.digest()));
+            user.setPassword(encrypted);
+            userMapper.ResetPassword(user);
+            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
+                    null);
+        }
+        return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+                "Verification codes do not match.");
     }
 
     @RequestMapping("/deleteUser")
@@ -92,5 +124,16 @@ public class UserController {
     @GetMapping("/login")
     public ModelAndView login() {
         return new ModelAndView("login");
+    }
+
+    @PostMapping("/getSMSCode")
+    public Response getSMSCode(@RequestBody Condition condition) {
+        String code = SMSService.getNonce_str(6);
+        String key =
+                condition.getRedisKey().toString() + '-' + condition.getPhone();
+        globalCache.set(key, code);
+        globalCache.expire(key, 5 * 60);
+        System.out.println(key + ", " + globalCache.get(key));
+        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", null);
     }
 }
