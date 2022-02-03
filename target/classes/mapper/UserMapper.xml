@@ -13,6 +13,8 @@
         <result property="introduction" column="introduction"/>
         <result property="status" column="userStatus"/>
         <result property="token" column="token"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
         <association property="addressList" column="userID"
                      foreignColumn="userID"
                      javaType="java.util.List"
@@ -129,13 +131,19 @@
         SELECT * FROM users WHERE userName = #{userName} and password =
                                                              #{password}
     </select>
+    <select id="GetUser"
+            parameterType="com.example.alijavapta.domain.User"
+            resultMap="userMap">
+        SELECT * FROM users WHERE userName = #{userName} or phone = #{phone}
+                               or email = #{email}
+    </select>
     <insert id="CreateUser"
             parameterType="com.example.alijavapta.domain.User">
         INSERT users (userID, userName, password, email, phone, introduction,
-        avatar)
+        avatar, createdAt, updatedAt)
          VALUE (CONCAT(DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
          LPAD(nextval('users'), 6, 0)), #{userName}, #{password}, #{email},
-        #{phone}, #{introduction}, #{avatar})
+        #{phone}, #{introduction}, #{avatar}, NOW(), NOW())
     </insert>
     <update id="UpdateUser" parameterType="com.example.alijavapta.domain.User">
         UPDATE users

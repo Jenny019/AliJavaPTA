@@ -3,8 +3,8 @@ package com.example.alijavapta.controller;
 import com.example.alijavapta.config.ResponseCode;
 import com.example.alijavapta.domain.*;
 import com.example.alijavapta.mapper.UserMapper;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
 import java.math.BigInteger;
@@ -51,7 +51,8 @@ public class UserController {
         System.out.println(user);
         if (user != null)
             return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", user);
-        return new Response(ResponseCode.FAIL.ordinal(), "FAIL", null);
+        return new Response(ResponseCode.FAIL.ordinal(), "FAIL", "UserName or" +
+                " password not correct");
     }
 
     @RequestMapping("/info")
@@ -63,9 +64,19 @@ public class UserController {
         return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", user);
     }
 
-    @RequestMapping("/createUser")
-    public int createUser(User user) {
-        return userMapper.CreateUser(user);
+    @PostMapping("/createUser")
+    public Response createUser(@RequestBody  User user) throws NoSuchAlgorithmException {
+        if (userMapper.GetUser(user) != null) {
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+                    "userName or phone exists. Please login.");
+        }
+        MessageDigest md5 = MessageDigest.getInstance("MD5");
+        md5.update(StandardCharsets.UTF_8.encode(user.getPassword()));
+        String encrypted = String.format("%032x", new BigInteger(1,
+                md5.digest()));
+        user.setPassword(encrypted);
+        userMapper.CreateUser(user);
+        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", null);
     }
 
     @RequestMapping("/updateUser")
@@ -76,5 +87,10 @@ public class UserController {
     @RequestMapping("/deleteUser")
     public int deleteUser(User user) {
         return userMapper.DeleteUser(user);
+    }
+
+    @GetMapping("/login")
+    public ModelAndView login() {
+        return new ModelAndView("login");
     }
 }

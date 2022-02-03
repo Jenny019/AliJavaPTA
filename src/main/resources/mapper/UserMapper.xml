@@ -131,6 +131,12 @@
         SELECT * FROM users WHERE userName = #{userName} and password =
                                                              #{password}
     </select>
+    <select id="GetUser"
+            parameterType="com.example.alijavapta.domain.User"
+            resultMap="userMap">
+        SELECT * FROM users WHERE userName = #{userName} or phone = #{phone}
+                               or email = #{email}
+    </select>
     <insert id="CreateUser"
             parameterType="com.example.alijavapta.domain.User">
         INSERT users (userID, userName, password, email, phone, introduction,
