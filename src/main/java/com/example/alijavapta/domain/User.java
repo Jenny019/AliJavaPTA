@@ -1,5 +1,6 @@
 package com.example.alijavapta.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -8,7 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
 @SolrDocument(collection = "users")
-public class User {
+public class User implements Serializable {
     @Id
     private String id;
     @Field

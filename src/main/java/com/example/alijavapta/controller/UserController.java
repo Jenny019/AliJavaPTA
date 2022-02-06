@@ -82,7 +82,8 @@ public class UserController {
         System.out.println(user.getUserName());
         System.out.println(user.getPassword());
         try {
-            currUser.login(new UsernamePasswordToken(user.getUserName(), user.getPassword()));
+            currUser.login(new UsernamePasswordToken(user.getUserName(),
+                    user.getPassword(), true));
         } catch (UnknownAccountException uae) {
             return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
                     "账户不存在");
