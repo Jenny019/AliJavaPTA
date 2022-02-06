@@ -103,6 +103,17 @@
             <artifactId>shiro-spring-boot-web-starter</artifactId>
             <version>1.7.1</version>
         </dependency>
+        <!--spring-data-redis session 管理-->
+        <dependency>
+            <groupId>org.springframework.session</groupId>
+            <artifactId>spring-session-data-redis</artifactId>
+        </dependency>
+        <!--排除内嵌tomcat-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>
