@@ -8,7 +8,8 @@ public interface UserMapper {
     List<User> ListUsers();
     List<CouponRecord> ListCoupons(Condition condition);
     List<Address> ListAddresses(Condition condition);
-    List<Role> ListRoles(Condition condition);
+    List<Role> ListRoles(User user);
+    List<Permission> ListPermissions(Role role);
 
     int CreateUser(User user);
     int UpdateUser(User user);
@@ -16,5 +17,4 @@ public interface UserMapper {
     int DeleteUser(User user);
 
     User GetUser(User user);
-    User Login(User user);
 }

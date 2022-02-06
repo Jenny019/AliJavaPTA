@@ -4,8 +4,15 @@ import com.example.alijavapta.config.RedisKey;
 import com.example.alijavapta.config.ResponseCode;
 import com.example.alijavapta.domain.*;
 import com.example.alijavapta.mapper.UserMapper;
+import com.example.alijavapta.shiro.MyFormAuthenticationFilter;
 import com.example.alijavapta.utils.IGlobalCache;
 import com.example.alijavapta.utils.SMSService;
+import org.apache.shiro.SecurityUtils;
+import org.apache.shiro.authc.*;
+import org.apache.shiro.authz.annotation.RequiresPermissions;
+import org.apache.shiro.authz.annotation.RequiresRoles;
+import org.apache.shiro.session.Session;
+import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
@@ -25,7 +32,14 @@ public class UserController {
     @Autowired
     private IGlobalCache globalCache;
 
+    @RequestMapping(value="/index")
+    public String index() {
+        return "index";
+    }
+
     @RequestMapping(value = "/findAllUser")
+    @RequiresRoles("管理员")
+    @RequiresPermissions("仪表盘") // 权限管理.
     public Iterable<User> getAllUser() {
         return userMapper.ListUsers();
     }
@@ -41,12 +55,25 @@ public class UserController {
     }
 
     @RequestMapping(value = "/findRoles")
-    public Iterable<Role> findRoles(Condition condition) {
-        return userMapper.ListRoles(condition);
+    public Iterable<Role> findRoles(User user) {
+        return userMapper.ListRoles(user);
+    }
+
+    @RequestMapping(value = "/findPermissions")
+    public Iterable<Permission> findPermissions(Role role) {
+        return userMapper.ListPermissions(role);
+    }
+
+    @PostMapping("/logout")
+    public Response logout() {
+        Subject currUser = SecurityUtils.getSubject();
+        currUser.logout();
+        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", null);
     }
 
     @PostMapping("/login")
     public Response login(@RequestBody User user) throws NoSuchAlgorithmException {
+        Subject currUser = SecurityUtils.getSubject();
         MessageDigest md5 = MessageDigest.getInstance("MD5");
         md5.update(StandardCharsets.UTF_8.encode(user.getPassword()));
         String encrypted = String.format("%032x", new BigInteger(1,
@@ -54,25 +81,43 @@ public class UserController {
         user.setPassword(encrypted);
         System.out.println(user.getUserName());
         System.out.println(user.getPassword());
-        user = userMapper.Login(user);
-        System.out.println(user);
-        if (user != null)
-            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", user);
-        return new Response(ResponseCode.FAIL.ordinal(), "FAIL", "UserName or" +
-                " password not correct");
+        try {
+            currUser.login(new UsernamePasswordToken(user.getUserName(), user.getPassword()));
+        } catch (UnknownAccountException uae) {
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+                    "账户不存在");
+        } catch (IncorrectCredentialsException ice) {
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+                    "密码不正确");
+        } catch (LockedAccountException lae) {
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+                    "账户已锁定");
+        } catch (ExcessiveAttemptsException eae) {
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+                    "用户名或密码错误次数过多，请十分钟后再试");
+        } catch (AuthenticationException ae) {
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+                    "未知错误，请重试");
+        }
+
+        if (currUser.isAuthenticated()) {
+            Session session = currUser.getSession();
+            //下面的是自定义的代码，随你怎么写
+            session.setAttribute("userInfo", currUser.getPrincipal());
+            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", currUser.getPrincipal());
+        }
+        return new Response(ResponseCode.FAIL.ordinal(), "FAIL", "UserName " +
+                "or password not correct");
     }
 
     @RequestMapping("/info")
-    public Response Info(User user)
-    {
-        Condition condition = new Condition();
-        condition.setUserID(user.getId());
-        user.setRoles(userMapper.ListRoles(condition));
+    public Response Info(User user) {
+        user.setRoles(userMapper.ListRoles(user));
         return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", user);
     }
 
     @PostMapping("/createUser")
-    public Response createUser(@RequestBody  User user) throws NoSuchAlgorithmException {
+    public Response createUser(@RequestBody User user) throws NoSuchAlgorithmException {
         if (userMapper.GetUser(user) != null) {
             return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
                     "userName or phone exists. Please login.");

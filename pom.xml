@@ -98,6 +98,11 @@
             <artifactId>json-smart</artifactId>
             <version>2.4.7</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring-boot-web-starter</artifactId>
+            <version>1.7.1</version>
+        </dependency>
     </dependencies>
 
     <build>

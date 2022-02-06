@@ -8,6 +8,7 @@ public class Condition {
     private String userID;
     private String userName;
     private String phone;
+    private String roleID;
     private int limit;
     private int offset;
     private int status = -1;
@@ -18,6 +19,14 @@ public class Condition {
     private long productID = -1;
     private RedisKey redisKey;
     private int redisKeyVal = -1;
+
+    public String getRoleID() {
+        return roleID;
+    }
+
+    public void setRoleID(String roleID) {
+        this.roleID = roleID;
+    }
 
     public String getPhone() {
         return phone;

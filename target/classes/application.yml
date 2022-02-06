@@ -65,3 +65,13 @@ mybatis:
   log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
 server:
  port: 8080
+shiro:
+ sessionManager:
+  sessionIdCookieEnabled: true
+  sessionIdUrlRewritingEnabled: true
+ unauthorizedUrl: /login
+ web:
+  enabled: true
+ successUrl: /index
+ loginUrl: /login
+

@@ -76,6 +76,16 @@
         <result property="name" column="couponCategoryName"/>
         <result property="status" column="couponCategoryStatus"/>
     </resultMap>
+    <resultMap type="com.example.alijavapta.domain.Permission"
+               id="permissionMap">
+        <id property="permissionID" column="permissionID"/>
+        <result property="name" column="permissionName"/>
+        <result property="url" column="url"/>
+        <result property="resource_type" column="resource_type"/>
+        <result property="pid" column="pid"/>
+        <result property="icon" column="icon"/>
+        <result property="status" column="permissionStatus"/>
+    </resultMap>
     <select id="ListUsers" resultMap="userMap">
         SELECT *, t5.name as couponCategoryName, t1.status as userStatus, t4.status
             as couponStatus, t5.status as couponCategoryStatus, t4.name as
@@ -119,11 +129,20 @@
     </select>
     <select id="ListRoles" resultType="java.util.List"
             resultMap="roleMap"
-            parameterType="com.example.alijavapta.domain.Condition">
+            parameterType="com.example.alijavapta.domain.User">
         SELECT *, t3.status as roleStatus, t3.name as roleName FROM users t1
         LEFT JOIN users_roles t2 ON T1.userID = t2.userID
         LEFT JOIN roles t3 ON T2.roleID = T3.roleID
-        WHERE t1.userID = #{userID} and t3.status = 1
+        WHERE t1.userID = #{id} and t3.status = 1
+    </select>
+    <select id="ListPermissions" resultType="java.util.List"
+            resultMap="permissionMap"
+            parameterType="com.example.alijavapta.domain.Role">
+        SELECT *, T3.name as permissionName, T3.status as permissionStatus
+        FROM roles T1
+        LEFT JOIN roles_permissions T2 ON T1.roleID = T2.roleID
+        LEFT JOIN permissions T3 ON T2.permissionID = T3.permissionID
+        WHERE T1.roleID = #{roleID} and T1.status = 1 and t3.status = 1
     </select>
     <select id="Login"
             parameterType="com.example.alijavapta.domain.User"
