@@ -17,4 +17,6 @@ public interface UserMapper {
     int DeleteUser(User user);
 
     User GetUser(User user);
+
+    int CreateProperty(User user);
 }

@@ -14,6 +14,8 @@ import org.apache.shiro.authz.annotation.RequiresRoles;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -118,6 +120,8 @@ public class UserController {
     }
 
     @PostMapping("/createUser")
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor =
+            Exception.class, value = "transactionManager")
     public Response createUser(@RequestBody User user) throws NoSuchAlgorithmException {
         if (userMapper.GetUser(user) != null) {
             return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
@@ -132,6 +136,7 @@ public class UserController {
                     md5.digest()));
             user.setPassword(encrypted);
             userMapper.CreateUser(user);
+            userMapper.CreateProperty(user);
             return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", null);
         } else {
             return new Response(ResponseCode.FAIL.ordinal(), "FAIL",

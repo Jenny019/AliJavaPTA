@@ -100,6 +100,7 @@ public class ShiroConfig {
         definition.addPathDefinition("/redisTest/**", "anon");
         definition.addPathDefinition("/getSMSCode", "anon");
         definition.addPathDefinition("/login", "anon");
+        definition.addPathDefinition("/createUser", "anon");
         definition.addPathDefinition("/**", "authc");
         return definition;
     }

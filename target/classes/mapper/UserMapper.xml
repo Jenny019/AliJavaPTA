@@ -29,6 +29,8 @@
     </resultMap>
     <resultMap type="com.example.alijavapta.domain.UserRole" id="usersRolesMap">
         <id column="usersRolesID" property="usersRolesID"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
         <association property="roles" column="roleID"
                      foreignColumn="roleID"
                      javaType="java.util.List"
@@ -38,11 +40,15 @@
         <id property="roleID" column="roleID" />
         <result property="name" column="roleName"  />
         <result property="status" column="roleStatus"  />
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
     </resultMap>
     <resultMap type="com.example.alijavapta.domain.CouponRecord" id="couponRecordMap">
         <id property="couponRecordID" column="couponRecordID"/>
         <result property="createdAt" column="createdAt"
                 javaType="java.util.Date"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
         <association property="coupon" foreignColumn="couponID"
                      javaType="com.example.alijavapta.domain.Coupon"
                      resultMap="couponMap"/>
@@ -56,6 +62,8 @@
         <result property="building" column="building"/>
         <result property="postalCode" column="postalCode"/>
         <result property="default" column="default"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
     </resultMap>
     <resultMap type="com.example.alijavapta.domain.Coupon" id="couponMap">
         <id property="couponID" column="couponID"/>
@@ -67,6 +75,8 @@
         <result property="description" column="description"/>
         <result property="prerequisite" column="prerequisite"/>
         <result property="status" column="couponStatus"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
         <association property="category" column="categoryID"
                      javaType="com.example.alijavapta.domain.CouponCategory"
                      resultMap="couponCategoryMap"/>
@@ -85,6 +95,19 @@
         <result property="pid" column="pid"/>
         <result property="icon" column="icon"/>
         <result property="status" column="permissionStatus"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.Property"
+               id="propertyMap">
+        <id property="propertyID" column="propertyID"/>
+        <result property="userID" column="userID"/>
+        <result property="province" column="province"/>
+        <result property="balance" column="balance"/>
+        <result property="unit" column="unit"/>
+        <result property="currency" column="currency"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
     </resultMap>
     <select id="ListUsers" resultMap="userMap">
         SELECT *, t5.name as couponCategoryName, t1.status as userStatus, t4.status
@@ -158,10 +181,14 @@
     </select>
     <insert id="CreateUser"
             parameterType="com.example.alijavapta.domain.User">
+        <selectKey order="BEFORE" keyProperty="id"
+                   resultType="java.lang.String">
+            SELECT (CONCAT(DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+            LPAD(nextval('users'), 6, 0)))
+        </selectKey>
         INSERT users (userID, userName, password, email, phone, introduction,
         avatar, createdAt, updatedAt)
-         VALUE (CONCAT(DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
-         LPAD(nextval('users'), 6, 0)), #{userName}, #{password}, #{email},
+         VALUE (#{id}, #{userName}, #{password}, #{email},
         #{phone}, #{introduction}, #{avatar}, NOW(), NOW())
     </insert>
     <update id="UpdateUser" parameterType="com.example.alijavapta.domain.User">
@@ -202,4 +229,12 @@
             parameterType="com.example.alijavapta.domain.User">
         DELETE FROM users WHERE userID = #{id}
     </delete>
+    <insert id="CreateProperty"
+            parameterType="com.example.alijavapta.domain.User">
+        INSERT properties (propertyID, userID, balance, unit, currency,
+         createdAt, updatedAt)
+         VALUE (CONCAT(DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+         LPAD(nextval('properties'), 6, 0)), #{id}, 0, '分', 'RMB', NOW(),
+        NOW())
+    </insert>
 </mapper>
