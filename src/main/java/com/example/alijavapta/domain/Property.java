@@ -1,8 +1,9 @@
 package com.example.alijavapta.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Property {
+public class Property implements Serializable {
     private String propertyID;
     private String userID;
     private int balance = -1;
@@ -10,6 +11,15 @@ public class Property {
     private String unit;
     private Date createdAt;
     private Date updatedAt;
+    private Money money = new Money();
+
+    public Money getMoney() {
+        return money;
+    }
+
+    public void setMoney(Money money) {
+        this.money = money;
+    }
 
     public String getPropertyID() {
         return propertyID;
@@ -33,6 +43,7 @@ public class Property {
 
     public void setBalance(int balance) {
         this.balance = balance;
+        this.money.setAmount(balance);
     }
 
     public String getCurrency() {
@@ -41,6 +52,7 @@ public class Property {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+        this.money.setCurrency(currency);
     }
 
     public String getUnit() {

@@ -1,9 +1,10 @@
 package com.example.alijavapta.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class UserRole {
+public class UserRole implements Serializable {
     private String usersRolesID;
     private List<User> users;
     private List<Role> roles;

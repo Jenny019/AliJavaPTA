@@ -298,8 +298,11 @@
             success: function(res) {
                 console.log(res);
                 if (res.code === 1) {
-                    $("#login-message").html("Login successful.")
+                    $("#login-message").html("Login successful. Will now redirect...")
                         .removeClass("text-danger").addClass("text-success");
+                    setTimeout(() => {
+                        window.location.href = "/index";
+                    }, 1000)
                 } else {
                     $("#login-message").html(res.data)
                         .removeClass("text-success").addClass("text-danger");
@@ -331,7 +334,7 @@
             success: function(res) {
                 console.log(res);
                 if (res.code === 1) {
-                    $("#register-message").html("Register successful.")
+                    $("#register-message").html("Register successful. Please login.")
                         .removeClass("text-danger").addClass("text-success");
                 } else {
                     $("#register-message").html(res.data)

@@ -35,42 +35,62 @@ public class UserController {
     private IGlobalCache globalCache;
 
     @RequestMapping(value="/index")
-    public String index() {
-        return "index";
+    public ModelAndView index() {
+        ModelAndView mv = new ModelAndView("index");
+        Subject currUser = SecurityUtils.getSubject();
+//        mv.addObject("currUser", currUser.getPrincipals());
+        return new ModelAndView("index");
     }
 
     @RequestMapping(value = "/findAllUser")
     @RequiresRoles("管理员")
     @RequiresPermissions("仪表盘") // 权限管理.
-    public Iterable<User> getAllUser() {
-        return userMapper.ListUsers();
+    public Response getAllUser() {
+        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
+                userMapper.CountUsers(),
+                userMapper.ListUsers());
     }
 
     @RequestMapping(value = "/findCoupons")
-    public Iterable<CouponRecord> findCoupons(Condition condition) {
-        return userMapper.ListCoupons(condition);
+    public Response findCoupons(Condition condition) {
+        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
+                userMapper.CountCoupons(),
+                userMapper.ListCoupons(condition));
     }
 
     @RequestMapping(value = "/findAddresses")
-    public Iterable<Address> findAddress(Condition condition) {
-        return userMapper.ListAddresses(condition);
+    public Response findAddress(Condition condition) {
+        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
+                userMapper.CountAddresses(),
+                userMapper.ListAddresses(condition));
     }
 
     @RequestMapping(value = "/findRoles")
-    public Iterable<Role> findRoles(User user) {
-        return userMapper.ListRoles(user);
+    public Response findRoles(User user) {
+        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
+                0,
+                userMapper.ListRoles(user));
     }
 
     @RequestMapping(value = "/findPermissions")
-    public Iterable<Permission> findPermissions(Role role) {
-        return userMapper.ListPermissions(role);
+    public Response findPermissions(Role role) {
+        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
+                0,
+                userMapper.ListPermissions(role));
+    }
+
+    @RequestMapping(value = "/findTransactions")
+    public Response findTransactions(Condition condition) {
+        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
+                userMapper.CountTransactions(),
+                userMapper.ListTransactions(condition));
     }
 
     @PostMapping("/logout")
     public Response logout() {
         Subject currUser = SecurityUtils.getSubject();
         currUser.logout();
-        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", null);
+        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", 0, null);
     }
 
     @PostMapping("/login")
@@ -87,19 +107,19 @@ public class UserController {
             currUser.login(new UsernamePasswordToken(user.getUserName(),
                     user.getPassword(), true));
         } catch (UnknownAccountException uae) {
-            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL", 0,
                     "账户不存在");
         } catch (IncorrectCredentialsException ice) {
-            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",0,
                     "密码不正确");
         } catch (LockedAccountException lae) {
-            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",0,
                     "账户已锁定");
         } catch (ExcessiveAttemptsException eae) {
-            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",0,
                     "用户名或密码错误次数过多，请十分钟后再试");
         } catch (AuthenticationException ae) {
-            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",0,
                     "未知错误，请重试");
         }
 
@@ -107,16 +127,19 @@ public class UserController {
             Session session = currUser.getSession();
             //下面的是自定义的代码，随你怎么写
             session.setAttribute("userInfo", currUser.getPrincipal());
-            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", currUser.getPrincipal());
+            session.setAttribute("propertyInfo",
+                    userMapper.GetProperty((User) currUser.getPrincipal()));
+            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
+                    0, currUser.getPrincipal());
         }
-        return new Response(ResponseCode.FAIL.ordinal(), "FAIL", "UserName " +
-                "or password not correct");
+        return new Response(ResponseCode.FAIL.ordinal(), "FAIL", 0, "UserName" +
+                " or password not correct");
     }
 
     @RequestMapping("/info")
     public Response Info(User user) {
         user.setRoles(userMapper.ListRoles(user));
-        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", user);
+        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", 0, user);
     }
 
     @PostMapping("/createUser")
@@ -124,7 +147,7 @@ public class UserController {
             Exception.class, value = "transactionManager")
     public Response createUser(@RequestBody User user) throws NoSuchAlgorithmException {
         if (userMapper.GetUser(user) != null) {
-            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+            return new Response(ResponseCode.FAIL.ordinal(),"FAIL",0,
                     "userName or phone exists. Please login.");
         }
         String key =
@@ -137,9 +160,9 @@ public class UserController {
             user.setPassword(encrypted);
             userMapper.CreateUser(user);
             userMapper.CreateProperty(user);
-            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", null);
+            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", 0,null);
         } else {
-            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",0,
                     "Verification codes do not match.");
         }
     }
@@ -160,10 +183,10 @@ public class UserController {
                     md5.digest()));
             user.setPassword(encrypted);
             userMapper.ResetPassword(user);
-            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
+            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",0,
                     null);
         }
-        return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+        return new Response(ResponseCode.FAIL.ordinal(), "FAIL",0,
                 "Verification codes do not match.");
     }
 
@@ -185,6 +208,6 @@ public class UserController {
         globalCache.set(key, code);
         globalCache.expire(key, 5 * 60);
         System.out.println(key + ", " + globalCache.get(key));
-        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", null);
+        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", 0,null);
     }
 }

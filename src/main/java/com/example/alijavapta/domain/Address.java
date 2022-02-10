@@ -1,8 +1,9 @@
 package com.example.alijavapta.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Address {
+public class Address implements Serializable {
     private String addressID;
     private User user;
     private String country;

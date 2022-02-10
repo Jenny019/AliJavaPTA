@@ -1,8 +1,9 @@
 package com.example.alijavapta.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Coupon {
+public class Coupon implements Serializable {
     private String couponID;
     private CouponCategory category;
     private String name;

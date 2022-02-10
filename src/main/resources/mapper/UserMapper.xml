@@ -109,6 +109,16 @@
         <result property="createdAt" column="createdAt"/>
         <result property="updatedAt" column="updatedAt"/>
     </resultMap>
+    <resultMap type="com.example.alijavapta.domain.Transaction"
+               id="transactionMap">
+        <id property="transactionID" column="transactionID"/>
+        <result property="userID" column="userID"/>
+        <result property="amount" column="amount"/>
+        <result property="type" column="type"/>
+        <result property="associationID" column="associationID"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+    </resultMap>
     <select id="ListUsers" resultMap="userMap">
         SELECT *, t5.name as couponCategoryName, t1.status as userStatus, t4.status
             as couponStatus, t5.status as couponCategoryStatus, t4.name as
@@ -121,6 +131,9 @@
         LEFT JOIN addresses t6 ON T1.userID = t6.userID
         LEFT JOIN users_roles t7 ON t7.userID = t1.userID
         LEFT JOIN roles t8 ON t8.roleID = t7.roleID
+    </select>
+    <select id="CountUsers" resultType="java.lang.Integer">
+        SELECT COUNT(1) FROM users;
     </select>
     <select id="ListCoupons" resultType="java.util.List"
             resultMap="couponRecordMap"
@@ -143,10 +156,33 @@
             AND t4.endDate &gt; #{endDate}
         </if>
     </select>
+    <select id="CountCoupons" resultType="java.lang.Integer"
+            parameterType="com.example.alijavapta.domain.Condition">
+        SELECT COUNT(1)
+        FROM users t1
+        LEFT JOIN coupon_records t3 on t3.userID = t1.userID
+        LEFT JOIN coupons t4 on t4.couponID = t3.couponID
+        WHERE t1.userID = #{userID}
+        <if test="status != -1">
+            AND status = #{status}
+        </if>
+        <if test="startDate != null">
+            AND t4.startDate &lt; #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND t4.endDate &gt; #{endDate}
+        </if>
+    </select>
     <select id="ListAddresses" resultType="java.util.List"
             resultMap="addressMap"
             parameterType="com.example.alijavapta.domain.Condition">
         SELECT * FROM users t1
+        LEFT JOIN addresses t2 ON T1.userID = t2.userID
+        WHERE t1.userID = #{userID}
+    </select>
+    <select id="CountAddresses" resultType="java.lang.Integer"
+            parameterType="com.example.alijavapta.domain.Condition">
+        SELECT COUNT(1) FROM users t1
         LEFT JOIN addresses t2 ON T1.userID = t2.userID
         WHERE t1.userID = #{userID}
     </select>
@@ -166,6 +202,24 @@
         LEFT JOIN roles_permissions T2 ON T1.roleID = T2.roleID
         LEFT JOIN permissions T3 ON T2.permissionID = T3.permissionID
         WHERE T1.roleID = #{roleID} and T1.status = 1 and t3.status = 1
+    </select>
+    <select id="ListTransactions" resultType="java.util.List"
+            resultMap="transactionMap"
+            parameterType="com.example.alijavapta.domain.Condition">
+        SELECT * FROM transactions
+        WHERE userID = #{userID}
+        <if test="transactionType != -1">
+          and type = #{transactionType}
+        </if>
+        limit #{offset}, #{limit}
+    </select>
+    <select id="CountTransactions" resultType="java.lang.Integer"
+            parameterType="com.example.alijavapta.domain.Condition">
+        SELECT COUNT(1) FROM transactions
+        WHERE userID = #{userID}
+        <if test="transactionType != -1">
+            and type = #{transactionType}
+        </if>
     </select>
     <select id="Login"
             parameterType="com.example.alijavapta.domain.User"
@@ -188,8 +242,8 @@
         </selectKey>
         INSERT users (userID, userName, password, email, phone, introduction,
         avatar, createdAt, updatedAt)
-         VALUE (#{id}, #{userName}, #{password}, #{email},
-        #{phone}, #{introduction}, #{avatar}, NOW(), NOW())
+         VALUE (#{id}, #{userName}, #{password}, #{email}, #{phone},
+        #{introduction}, #{avatar}, NOW(), NOW())
     </insert>
     <update id="UpdateUser" parameterType="com.example.alijavapta.domain.User">
         UPDATE users
@@ -237,4 +291,9 @@
          LPAD(nextval('properties'), 6, 0)), #{id}, 0, '分', 'RMB', NOW(),
         NOW())
     </insert>
+    <select id="GetProperty"
+            parameterType="com.example.alijavapta.domain.User"
+            resultMap="propertyMap">
+        SELECT * FROM properties WHERE userID = #{id}
+    </select>
 </mapper>

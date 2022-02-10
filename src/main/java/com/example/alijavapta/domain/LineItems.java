@@ -1,8 +1,9 @@
 package com.example.alijavapta.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class LineItems {
+public class LineItems implements Serializable {
     private String lineItemID;
     private Product product;
     private ProductVariant productVariant;

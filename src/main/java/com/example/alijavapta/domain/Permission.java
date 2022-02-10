@@ -1,8 +1,9 @@
 package com.example.alijavapta.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Permission {
+public class Permission implements Serializable {
     private String permissionID;
     private String name;
     private String url;

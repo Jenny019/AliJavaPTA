@@ -1,8 +1,9 @@
 package com.example.alijavapta.domain;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class ProductVariant {
+public class ProductVariant implements Serializable {
     private String productVariantID;
     private String name;
     private String value;

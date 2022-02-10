@@ -10,6 +10,7 @@ public class Condition {
     private String phone;
     private String roleID;
     private int limit;
+    private int page;
     private int offset;
     private int status = -1;
     private Date startDate;
@@ -19,6 +20,24 @@ public class Condition {
     private long productID = -1;
     private RedisKey redisKey;
     private int redisKeyVal = -1;
+    private int transactionType = -1;
+
+    public int getPage() {
+        return page;
+    }
+
+    public void setPage(int page) {
+        this.page = page;
+        this.setOffset((page - 1) * this.limit);
+    }
+
+    public int getTransactionType() {
+        return transactionType;
+    }
+
+    public void setTransactionType(int transactionType) {
+        this.transactionType = transactionType;
+    }
 
     public String getRoleID() {
         return roleID;

@@ -4,11 +4,21 @@ public class Response {
     private int code;
     private String msg;
     private Object data;
+    private int count;
 
-    public Response(int code, String msg, Object data) {
+    public Response(int code, String msg, int count, Object data) {
         this.code = code;
         this.msg = msg;
+        this.count = count;
         this.data = data;
+    }
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
     }
 
     public int getCode() {

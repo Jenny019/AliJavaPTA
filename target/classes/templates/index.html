@@ -3,19 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <title>Spring Boot Thymeleaf</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/index.css">
 </head>
 <body>
-<table border="1">
-    <tr>
-        <th>编号</th>
-        <th>用户名</th>
-        <th>密码</th>
-    </tr>
-    <tr th:each="item : ${users}" >
-        <td th:text="${item.id}"></td>
-        <td th:text="${item.userName}"></td>
-        <th th:text="${item.password}"></th>
-    </tr>
-</table>
+<div class="wrapper rounded">
+    <nav class="navbar navbar-expand-lg navbar-dark dark d-lg-flex align-items-lg-start"> <a class="navbar-brand" href="#">Transactions <p class="text-muted pl-1">Welcome to your transactions</p> </a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-lg-auto">
+                <li class="nav-item"> <a class="nav-link" href="#"><span class="fa fa-bell-o font-weight-bold"></span> <span class="notify">Notifications</span> </a> </li>
+                <li class="nav-item "> <a href="#"><span class="fa fa-search"></span></a> <input type="search" class="dark" placeholder="Search"> </li>
+            </ul>
+        </div>
+    </nav>
+    <div class="row mt-2 pt-2">
+        <div class="col-md-4" id="balance">
+            <div class="d-flex justify-content-start align-items-center">
+                <p class="fa"></p>
+                <p class="text mx-3">Balance</p>
+                <p class="text-white ml-4 money"
+                   th:text="${'￥' + #numbers.formatDecimal(session.propertyInfo.money.amount/100, 1, 'COMMA', 2, 'POINT')}"></p>
+            </div>
+        </div>
+        <div class="col-md-4" id="income">
+            <div class="d-flex justify-content-start align-items-center">
+                <p class="fa fa-long-arrow-down"></p>
+                <p class="text mx-3">Income</p>
+                <p class="text-white ml-4 money">$9,758.23</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="d-flex justify-content-md-end align-items-center">
+                <div class="fa fa-long-arrow-up"></div>
+                <div class="text mx-3">Expense</div>
+                <div class="text-white ml-4 money">$961.23</div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between align-items-center mt-3">
+        <ul class="nav nav-tabs w-75">
+            <li class="nav-item"> <a class="nav-link active" href="#history">History</a> </li>
+            <li class="nav-item"> <a class="nav-link" href="#">Reports</a> </li>
+        </ul> <button class="btn btn-primary">New Transaction</button>
+    </div>
+    <div class="table-responsive mt-3">
+        <table class="table table-dark table-borderless">
+            <thead>
+            <tr>
+                <th scope="col">Type</th>
+                <th scope="col">AssociationID</th>
+                <th scope="col">Date</th>
+                <th scope="col" class="text-right">Amount</th>
+            </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+    <div class="d-flex justify-content-between align-items-center results"> <span class="pl-md-3">Showing<b class="text-white"> 1-7 0f 200 </b> trasactions</span>
+        <div class="pt-3">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination">
+                    <li class="page-item"
+                        id="prev"
+                        onclick="page > 1 && (--page, updatePagination(),
+                        loadTransaction(page))">
+                        <a class="page-link" href="#" aria-label="Previous">
+                            <span aria-hidden="true">&lt;</span> </a> </li>
+                    <li class="page-item"
+                        id="next"
+                        onclick="page < totalPage && (++page,
+                        updatePagination(), loadTransaction(page))">
+                        <a class="page-link" href="#" aria-label="Next">
+                        <span aria-hidden="true">&gt;</span> </a> </li>
+                </ul>
+            </nav>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+<script th:inline="javascript">
+        /*<![CDATA[*/
+        let page = 1, totalPage = 1, limit = 15;
+        function updatePagination() {
+            if (page <= 1) {
+                $("#prev").addClass("disabled");
+            } else {
+                $("#prev").removeClass("disabled");
+            }
+            if (page >= totalPage) {
+                $("#next").addClass("disabled");
+            } else {
+                $("#next").removeClass("disabled");
+            }
+        }
+        updatePagination();
+        loadTransaction(page);
+
+        function loadTransaction(page) {
+            if (page <= 0 || page > totalPage) {
+                return;
+            }
+            $.ajax({
+                url: '/findTransactions',
+                type: "POST",
+                data: JSON.stringify({
+                    userID: [[${session.userInfo.id}]],
+                    type: 0,
+                    limit: limit,
+                    page: page
+                }),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (res) {
+                    if (res.code === 1) {
+                        totalPage = Math.ceil(res.count / limit);
+                        const list = res.data;
+                        list.forEach((v, i) => {
+                            $("tbody").append(
+                                `<tr>
+                            <td scope="row"><span
+                                className="fa fa-briefcase mr-1"></span>${v.type === 0? '充值': '消费'}
+                            </td>
+                            <td><span className="fa fa-cc-mastercard"></span>${v.associationID}</td>
+                            <td className="text-muted">${v.createdAt}</td>
+                            <td className="d-flex justify-content-end align-items-center">
+                                <span className="fa fa-long-arrow-up mr-1"></span> $${v.amount}
+                            </td>
+                        </tr>`);
+                    });
+                } else {
+
+                }
+            }
+        });
+    }
+
+    /*]]>*/
+</script>
 </body>
 </html>
