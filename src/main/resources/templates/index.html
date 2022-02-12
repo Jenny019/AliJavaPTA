@@ -12,32 +12,50 @@
     <nav class="navbar navbar-expand-lg navbar-dark dark d-lg-flex align-items-lg-start"> <a class="navbar-brand" href="#">Transactions <p class="text-muted pl-1">Welcome to your transactions</p> </a> <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ml-lg-auto">
-                <li class="nav-item"> <a class="nav-link" href="#"><span class="fa fa-bell-o font-weight-bold"></span> <span class="notify">Notifications</span> </a> </li>
-                <li class="nav-item "> <a href="#"><span class="fa fa-search"></span></a> <input type="search" class="dark" placeholder="Search"> </li>
+                <li class="nav-item ">
+                    <input id="startDate" type="date" class="light"
+                           placeholder="Date Start" />
+                </li>
+                <li class="nav-item ">
+                    <input id="endDate" type="date" class="light"
+                           placeholder="Date End" />
+                </li>
+                <li class="nav-item ">
+                    <select id="typeSelect" class="light">
+                        <option value="">类型</option>
+                        <option value="0">充值</option>
+                        <option value="1">消费</option>
+                    </select>
+                </li>
+                <li class="nav-item">
+                    <a class="fa fa-search"
+                       href="javascript: loadTransaction(1)"></a>
+                </li>
             </ul>
         </div>
     </nav>
     <div class="row mt-2 pt-2">
-        <div class="col-md-4" id="balance">
-            <div class="d-flex justify-content-start align-items-center">
-                <p class="fa"></p>
-                <p class="text mx-3">Balance</p>
-                <p class="text-white ml-4 money"
-                   th:text="${'￥' + #numbers.formatDecimal(session.propertyInfo.money.amount/100, 1, 'COMMA', 2, 'POINT')}"></p>
+        <div class="col-md-4" id="balance-wrapper">
+            <div class="d-flex justify-content-center align-items-center">
+                <div
+                        class="fa fa-money d-flex justify-content-center align-items-center"></div>
+                <div class="text mx-3">Balance</div>
+                <div class="text-white ml-4 money"
+                   th:text="${'￥' + #numbers.formatDecimal(session.propertyInfo.money.amount/100, 1, 'COMMA', 2, 'POINT')}"></div>
             </div>
         </div>
-        <div class="col-md-4" id="income">
-            <div class="d-flex justify-content-start align-items-center">
-                <p class="fa fa-long-arrow-down"></p>
-                <p class="text mx-3">Income</p>
-                <p class="text-white ml-4 money">$9,758.23</p>
+        <div class="col-md-4" id="income-wrapper">
+            <div class="d-flex justify-content-center align-items-center">
+                <div class="fa fa-long-arrow-down d-flex justify-content-center align-items-center"></div>
+                <div class="text mx-3">Income</div>
+                <div class="text-white ml-4 money" id="income">￥0</div>
             </div>
         </div>
         <div class="col-md-4">
-            <div class="d-flex justify-content-md-end align-items-center">
-                <div class="fa fa-long-arrow-up"></div>
+            <div class="d-flex justify-content-center align-items-center">
+                <div class="fa fa-long-arrow-up d-flex justify-content-center align-items-center"></div>
                 <div class="text mx-3">Expense</div>
-                <div class="text-white ml-4 money">$961.23</div>
+                <div class="text-white ml-4 money" id="expense">￥0</div>
             </div>
         </div>
     </div>
@@ -112,26 +130,34 @@
                 type: "POST",
                 data: JSON.stringify({
                     userID: [[${session.userInfo.id}]],
-                    type: 0,
                     limit: limit,
-                    page: page
+                    page: page,
+                    transactionType: $("#typeSelect").val() || undefined,
+                    startDate: $("#startDate").val() || undefined,
+                    endDate: $("#endDate").val() || undefined
                 }),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (res) {
                     if (res.code === 1) {
-                        totalPage = Math.ceil(res.count / limit);
-                        const list = res.data;
+                        totalPage = Math.max(1, Math.ceil(res.count / limit));
+                        const list = res.data.list;
+                        $("#income").html("￥" +
+                            (res.data.income / 100).toFixed(2));
+                        $("#expense").html("￥" +
+                            (res.data.expense / 100).toFixed(2));
+                        $("tbody").empty();
                         list.forEach((v, i) => {
                             $("tbody").append(
                                 `<tr>
-                            <td scope="row"><span
-                                className="fa fa-briefcase mr-1"></span>${v.type === 0? '充值': '消费'}
+                            <td><span
+                                class="fa fa-briefcase mr-1"></span>${v.type
+                                === 0? '充值': '消费'}
                             </td>
-                            <td><span className="fa fa-cc-mastercard"></span>${v.associationID}</td>
-                            <td className="text-muted">${v.createdAt}</td>
-                            <td className="d-flex justify-content-end align-items-center">
-                                <span className="fa fa-long-arrow-up mr-1"></span> $${v.amount}
+                            <td><span class="fa fa-cc-mastercard"></span>${v.associationID}</td>
+                            <td class="text-muted">${v.createdAt}</td>
+                            <td class="d-flex justify-content-end align-items-center">
+                                <span class="fa fa-long-arrow-up mr-1"></span> $${v.amount}
                             </td>
                         </tr>`);
                     });
