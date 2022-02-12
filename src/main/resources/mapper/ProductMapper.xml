@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.alijavapta.mapper.ProductMapper">
+<mapper namespace="com.example.alijavapta.mapper.my.ProductMapper">
     <resultMap type="com.example.alijavapta.domain.Product" id="productMap">
         <id property="productID" column="productID"/>
         <result property="title" column="title"/>

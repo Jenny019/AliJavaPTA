@@ -2,7 +2,7 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.alijavapta.mapper.UserMapper">
+<mapper namespace="com.example.alijavapta.mapper.my.UserMapper">
     <resultMap type="com.example.alijavapta.domain.User" id="userMap">
         <id property="id" column="userID"/>
         <result property="userName" column="userName"/>
@@ -211,6 +211,12 @@
         <if test="transactionType != -1">
           and type = #{transactionType}
         </if>
+        <if test="startDate != null">
+            AND createdAt &gt;= #{startDate}
+        </if>
+        <if test="endDate != null">
+            AND createdAt &lt;= #{endDate}
+        </if>
         limit #{offset}, #{limit}
     </select>
     <select id="CountTransactions" resultType="java.lang.Integer"
@@ -295,5 +301,21 @@
             parameterType="com.example.alijavapta.domain.User"
             resultMap="propertyMap">
         SELECT * FROM properties WHERE userID = #{id}
+    </select>
+    <insert id="CreateTransaction"
+            parameterType="com.example.alijavapta.domain.Transaction">
+        <selectKey order="BEFORE" keyProperty="transactionID"
+                   resultType="java.lang.String">
+            SELECT (CONCAT(DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+            LPAD(nextval('transactions'), 6, 0)))
+        </selectKey>
+        INSERT transactions (transactionID, type, amount, balance, userID, associationID, createdAt, updatedAt)
+         VALUE (#{transactionID}, #{type}, #{amount}, #{balance}, #{userID},
+        #{assocationID}, NOW(), NOW())
+    </insert>
+    <select id="GetTransaction"
+            parameterType="com.example.alijavapta.domain.Transaction"
+            resultMap="transactionMap">
+        SELECT * FROM transactions WHERE transactionID = #{transactionID}
     </select>
 </mapper>
