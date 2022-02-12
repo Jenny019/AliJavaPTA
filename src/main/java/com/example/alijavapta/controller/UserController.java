@@ -3,8 +3,7 @@ package com.example.alijavapta.controller;
 import com.example.alijavapta.config.RedisKey;
 import com.example.alijavapta.config.ResponseCode;
 import com.example.alijavapta.domain.*;
-import com.example.alijavapta.mapper.UserMapper;
-import com.example.alijavapta.shiro.MyFormAuthenticationFilter;
+import com.example.alijavapta.mapper.my.UserMapper;
 import com.example.alijavapta.utils.IGlobalCache;
 import com.example.alijavapta.utils.SMSService;
 import org.apache.shiro.SecurityUtils;
@@ -24,6 +23,7 @@ import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 @RestController
 @CrossOrigin(origins = "*")
@@ -79,11 +79,53 @@ public class UserController {
                 userMapper.ListPermissions(role));
     }
 
-    @RequestMapping(value = "/findTransactions")
-    public Response findTransactions(Condition condition) {
+    static class TransactionData {
+        private List<Transaction> list;
+        private long income;
+        private long expense;
+
+        public List<Transaction> getList() {
+            return list;
+        }
+
+        public void setList(List<Transaction> list) {
+            this.list = list;
+        }
+
+        public long getIncome() {
+            return income;
+        }
+
+        public void setIncome(long income) {
+            this.income = income;
+        }
+
+        public long getExpense() {
+            return expense;
+        }
+
+        public void setExpense(long expense) {
+            this.expense = expense;
+        }
+    }
+
+    @PostMapping(value = "/findTransactions")
+    public Response findTransactions(@RequestBody  Condition condition) {
+        TransactionData td = new TransactionData();
+        td.setList(userMapper.ListTransactions(condition));
+        long income = 0;
+        long expense = 0;
+        for (Transaction t: td.getList()) {
+           if (t.getType() == 0) {
+               income += t.getAmount();
+           } else {
+               expense += t.getAmount();
+           }
+        }
+        td.setIncome(income);
+        td.setExpense(expense);
         return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
-                userMapper.CountTransactions(),
-                userMapper.ListTransactions(condition));
+                userMapper.CountTransactions(), td);
     }
 
     @PostMapping("/logout")
@@ -193,6 +235,20 @@ public class UserController {
     @RequestMapping("/deleteUser")
     public int deleteUser(User user) {
         return userMapper.DeleteUser(user);
+    }
+
+    @PostMapping("/createTransaction")
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor =
+            Exception.class, value = "transactionManager")
+    public Response createTransaction(@RequestBody Transaction transaction) throws NoSuchAlgorithmException {
+        try {
+            userMapper.CreateTransaction(transaction);
+            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", 0,
+                    userMapper.GetTransaction(transaction));
+        } catch (Exception e){
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",0,
+                    e.getMessage());
+        }
     }
 
     @GetMapping("/login")

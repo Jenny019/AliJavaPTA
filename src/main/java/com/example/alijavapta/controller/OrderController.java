@@ -1,8 +1,7 @@
 package com.example.alijavapta.controller;
 
 import com.example.alijavapta.domain.*;
-import com.example.alijavapta.mapper.OrderMapper;
-import com.example.alijavapta.mapper.ProductMapper;
+import com.example.alijavapta.mapper.my.OrderMapper;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

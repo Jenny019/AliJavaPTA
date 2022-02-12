@@ -32,7 +32,7 @@ body {
     font-size: 30px
 }
 
-#income {
+#income-wrapper, #balance-wrapper {
     border-right: 1px solid #bbb
 }
 
@@ -42,8 +42,9 @@ body {
 
 .nav-item .nav-link .fa-bell-o,
 .fa-long-arrow-down,
-.fa-long-arrow-up {
-    padding: 10px 10px;
+.fa-long-arrow-up,
+.fa-money {
+    /*padding: 10px 10px;*/
     background-color: #444;
     border-radius: 50%;
     position: relative;
@@ -66,8 +67,8 @@ body {
     outline: none;
     box-shadow: none;
     padding: 3px 8px;
-    width: 75%;
-    color: #eee
+    width: 100%;
+    color: #bbb
 }
 
 .nav-item .fa-search {
@@ -76,10 +77,19 @@ body {
     cursor: pointer
 }
 
+.nav-item select {
+    color: #bbb;
+    width: 75px;
+    padding: 3.75px 8px;
+    border: none;
+    outline: none;
+    box-shadow: none;
+}
+
 .navbar-nav:last-child {
     display: flex;
     align-items: center;
-    width: 40%
+    width: 100%
 }
 
 .navbar-nav .nav-item {
@@ -101,9 +111,10 @@ body {
 }
 
 .fa-long-arrow-down,
-.fa-long-arrow-up {
-    padding-left: 12px;
-    padding-top: 8px;
+.fa-long-arrow-up,
+.fa-money {
+    /*padding-left: 12px;*/
+    /*padding-top: 8px;*/
     height: 30px;
     width: 30px;
     border-radius: 50%;
@@ -192,7 +203,9 @@ tbody tr td.text-muted {
 }
 
 tbody tr td .fa-long-arrow-up,
-tbody tr td .fa-long-arrow-down {
+tbody tr td .fa-long-arrow-down,
+tbody tr td .fa-money
+{
     font-size: 12px;
     padding-left: 7px;
     padding-top: 3px;
@@ -276,7 +289,7 @@ tbody tr td .fa-long-arrow-down {
         padding: 0px
     }
 
-    #income {
+    #income-wrapper, #balance-wrapper {
         border: none
     }
 }

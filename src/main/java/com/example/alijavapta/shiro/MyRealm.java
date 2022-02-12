@@ -3,7 +3,7 @@ package com.example.alijavapta.shiro;
 import com.example.alijavapta.domain.Permission;
 import com.example.alijavapta.domain.Role;
 import com.example.alijavapta.domain.User;
-import com.example.alijavapta.mapper.UserMapper;
+import com.example.alijavapta.mapper.my.UserMapper;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;

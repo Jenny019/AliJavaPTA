@@ -1,4 +1,4 @@
-package com.example.alijavapta.mapper;
+package com.example.alijavapta.mapper.my;
 
 import com.example.alijavapta.domain.Condition;
 import com.example.alijavapta.domain.Order;

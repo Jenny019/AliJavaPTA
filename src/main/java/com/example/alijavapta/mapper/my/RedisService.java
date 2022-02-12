@@ -1,4 +1,4 @@
-package com.example.alijavapta.mapper;
+package com.example.alijavapta.mapper.my;
 
 import com.example.alijavapta.domain.User;
 import lombok.extern.slf4j.Slf4j;
@@ -14,24 +14,24 @@ public class RedisService {
     private StringRedisTemplate stringRedisTemplate;
 
     public boolean setUserByStringRedisTemplate(User user){
-        ValueOperations ops=stringRedisTemplate.opsForValue();
+        ValueOperations<String, String> ops=stringRedisTemplate.opsForValue();
         ops.set(user.getUserName(), user.getPassword());
         return true;
     }
 
     public String getUserByStringRedisTemplate(String name){
-        ValueOperations ops=stringRedisTemplate.opsForValue();
-        return ops.get(name).toString();
+        ValueOperations<String, String> ops=stringRedisTemplate.opsForValue();
+        return ops.get(name);
     }
 
     public boolean setString(String key,String value){
-        ValueOperations ops=stringRedisTemplate.opsForValue();
+        ValueOperations<String, String> ops=stringRedisTemplate.opsForValue();
         ops.set(key,value);
         return true;
     }
 
     public String getString(String key){
-        ValueOperations ops=stringRedisTemplate.opsForValue();
-        return (String)ops.get(key);
+        ValueOperations<String, String> ops=stringRedisTemplate.opsForValue();
+        return ops.get(key);
     }
 }

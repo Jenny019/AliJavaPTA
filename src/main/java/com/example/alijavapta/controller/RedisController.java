@@ -1,7 +1,7 @@
 package com.example.alijavapta.controller;
 
 import com.example.alijavapta.domain.User;
-import com.example.alijavapta.mapper.RedisService;
+import com.example.alijavapta.mapper.my.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

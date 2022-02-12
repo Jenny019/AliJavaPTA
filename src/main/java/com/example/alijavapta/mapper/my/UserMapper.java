@@ -1,4 +1,4 @@
-package com.example.alijavapta.mapper;
+package com.example.alijavapta.mapper.my;
 
 import com.example.alijavapta.domain.*;
 
@@ -26,4 +26,7 @@ public interface UserMapper {
 
     int CreateProperty(User user);
     Property GetProperty(User user);
+
+    int CreateTransaction(Transaction transaction);
+    Transaction GetTransaction(Transaction transaction);
 }

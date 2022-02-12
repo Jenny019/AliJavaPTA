@@ -8,9 +8,18 @@ public class Transaction implements Serializable {
     private String userID;
     private long amount;
     private int type;
+    private long balance;
     private Date createdAt;
     private Date updatedAt;
     private String associationID;
+
+    public long getBalance() {
+        return balance;
+    }
+
+    public void setBalance(long balance) {
+        this.balance = balance;
+    }
 
     public String getTransactionID() {
         return transactionID;

@@ -2,6 +2,7 @@ package com.example.alijavapta.domain;
 
 import com.example.alijavapta.config.RedisKey;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class Condition {
@@ -141,7 +142,10 @@ public class Condition {
     }
 
     public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        this.startDate = calendar.getTime();
     }
 
     public Date getEndDate() {
@@ -149,6 +153,9 @@ public class Condition {
     }
 
     public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(endDate);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        this.endDate = calendar.getTime();
     }
 }
