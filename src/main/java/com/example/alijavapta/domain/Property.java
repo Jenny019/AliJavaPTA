@@ -6,7 +6,7 @@ import java.util.Date;
 public class Property implements Serializable {
     private String propertyID;
     private String userID;
-    private int balance = -1;
+    private long balance = -1;
     private String currency;
     private String unit;
     private Date createdAt;
@@ -37,11 +37,11 @@ public class Property implements Serializable {
         this.userID = userID;
     }
 
-    public int getBalance() {
+    public long getBalance() {
         return balance;
     }
 
-    public void setBalance(int balance) {
+    public void setBalance(long balance) {
         this.balance = balance;
         this.money.setAmount(balance);
     }

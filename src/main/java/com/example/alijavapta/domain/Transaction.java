@@ -13,14 +13,6 @@ public class Transaction implements Serializable {
     private Date updatedAt;
     private String associationID;
 
-    public long getBalance() {
-        return balance;
-    }
-
-    public void setBalance(long balance) {
-        this.balance = balance;
-    }
-
     public String getTransactionID() {
         return transactionID;
     }
@@ -51,6 +43,14 @@ public class Transaction implements Serializable {
 
     public void setType(int type) {
         this.type = type;
+    }
+
+    public long getBalance() {
+        return balance;
+    }
+
+    public void setBalance(long balance) {
+        this.balance = balance;
     }
 
     public Date getCreatedAt() {

@@ -3,6 +3,8 @@ package com.example.alijavapta.controller;
 import com.example.alijavapta.config.RedisKey;
 import com.example.alijavapta.config.ResponseCode;
 import com.example.alijavapta.domain.*;
+import com.example.alijavapta.mapper.alipay.AlipayMapper;
+import com.example.alijavapta.mapper.bank.BankMapper;
 import com.example.alijavapta.mapper.my.UserMapper;
 import com.example.alijavapta.utils.IGlobalCache;
 import com.example.alijavapta.utils.SMSService;
@@ -30,6 +32,12 @@ import java.util.List;
 public class UserController {
     @Resource
     private UserMapper userMapper;
+
+    @Resource
+    private BankMapper bankMapper;
+
+    @Resource
+    private AlipayMapper alipayMapper;
 
     @Autowired
     private IGlobalCache globalCache;
@@ -83,6 +91,15 @@ public class UserController {
         private List<Transaction> list;
         private long income;
         private long expense;
+        private long balance;
+
+        public long getBalance() {
+            return balance;
+        }
+
+        public void setBalance(long balance) {
+            this.balance = balance;
+        }
 
         public List<Transaction> getList() {
             return list;
@@ -112,9 +129,12 @@ public class UserController {
     @PostMapping(value = "/findTransactions")
     public Response findTransactions(@RequestBody  Condition condition) {
         TransactionData td = new TransactionData();
+        Subject currUser = SecurityUtils.getSubject();
+        condition.setUserID(((User) currUser.getPrincipal()).getId());
         td.setList(userMapper.ListTransactions(condition));
         long income = 0;
         long expense = 0;
+        td.setBalance(userMapper.GetProperty((User) currUser.getPrincipal()).getBalance());
         for (Transaction t: td.getList()) {
            if (t.getType() == 0) {
                income += t.getAmount();
@@ -125,7 +145,7 @@ public class UserController {
         td.setIncome(income);
         td.setExpense(expense);
         return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
-                userMapper.CountTransactions(), td);
+                userMapper.CountTransactions(condition), td);
     }
 
     @PostMapping("/logout")
@@ -186,7 +206,7 @@ public class UserController {
 
     @PostMapping("/createUser")
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor =
-            Exception.class, value = "transactionManager")
+            Exception.class, value = "myTransactionManager")
     public Response createUser(@RequestBody User user) throws NoSuchAlgorithmException {
         if (userMapper.GetUser(user) != null) {
             return new Response(ResponseCode.FAIL.ordinal(),"FAIL",0,
@@ -239,10 +259,29 @@ public class UserController {
 
     @PostMapping("/createTransaction")
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor =
-            Exception.class, value = "transactionManager")
+            Exception.class)
     public Response createTransaction(@RequestBody Transaction transaction) throws NoSuchAlgorithmException {
         try {
+            Subject currUser = SecurityUtils.getSubject();
+            Property property =
+                    userMapper.GetProperty((User)currUser.getPrincipal());
+            long newBalance;
+            transaction.setAmount(transaction.getAmount() * 100);
+            if (transaction.getType() == 0) { // 充值
+                newBalance = property.getBalance() + transaction.getAmount();
+                transaction.setBalance(newBalance);
+                property.setBalance(newBalance);
+                bankMapper.subtract(transaction);
+                alipayMapper.subtract(transaction);
+            } else { // 提现
+                newBalance = property.getBalance() - transaction.getAmount();
+                transaction.setBalance(newBalance);
+                property.setBalance(newBalance);
+                bankMapper.increase(transaction);
+                alipayMapper.increase(transaction);
+            }
             userMapper.CreateTransaction(transaction);
+            userMapper.UpdateProperty(property);
             return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", 0,
                     userMapper.GetTransaction(transaction));
         } catch (Exception e){

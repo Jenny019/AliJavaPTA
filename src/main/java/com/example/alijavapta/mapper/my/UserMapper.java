@@ -8,7 +8,7 @@ public interface UserMapper {
     int CountUsers();
     int CountCoupons();
     int CountAddresses();
-    int CountTransactions();
+    int CountTransactions(Condition condition);
 
     List<User> ListUsers();
     List<CouponRecord> ListCoupons(Condition condition);
@@ -26,6 +26,7 @@ public interface UserMapper {
 
     int CreateProperty(User user);
     Property GetProperty(User user);
+    int UpdateProperty(Property property);
 
     int CreateTransaction(Transaction transaction);
     Transaction GetTransaction(Transaction transaction);

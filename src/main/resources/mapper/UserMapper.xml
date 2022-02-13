@@ -311,11 +311,16 @@
         </selectKey>
         INSERT transactions (transactionID, type, amount, balance, userID, associationID, createdAt, updatedAt)
          VALUE (#{transactionID}, #{type}, #{amount}, #{balance}, #{userID},
-        #{assocationID}, NOW(), NOW())
+        (CONCAT(DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+        LPAD(nextval('associations'), 6, 0))), NOW(), NOW())
     </insert>
     <select id="GetTransaction"
             parameterType="com.example.alijavapta.domain.Transaction"
             resultMap="transactionMap">
         SELECT * FROM transactions WHERE transactionID = #{transactionID}
     </select>
+    <update id="UpdateProperty"
+            parameterType="com.example.alijavapta.domain.Property">
+        UPDATE properties SET balance = #{balance} WHERE userID = #{userID};
+    </update>
 </mapper>
