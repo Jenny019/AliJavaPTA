@@ -101,6 +101,7 @@ public class ShiroConfig {
         definition.addPathDefinition("/getSMSCode", "anon");
         definition.addPathDefinition("/login", "anon");
         definition.addPathDefinition("/createUser", "anon");
+        definition.addPathDefinition("/admin/**", "anon");
         definition.addPathDefinition("/**", "authc");
         return definition;
     }

@@ -27,6 +27,10 @@
                      javaType="java.util.List"
                      resultMap="usersRolesMap" />
     </resultMap>
+    <resultMap type="com.example.alijavapta.domain.User" id="simpleUserMap">
+        <id property="id" column="userID"/>
+        <result property="userName" column="userName"/>
+    </resultMap>
     <resultMap type="com.example.alijavapta.domain.UserRole" id="usersRolesMap">
         <id column="usersRolesID" property="usersRolesID"/>
         <result property="createdAt" column="createdAt"/>
@@ -45,8 +49,11 @@
     </resultMap>
     <resultMap type="com.example.alijavapta.domain.CouponRecord" id="couponRecordMap">
         <id property="couponRecordID" column="couponRecordID"/>
-        <result property="createdAt" column="createdAt"
-                javaType="java.util.Date"/>
+        <result property="valid_start_time" column="valid_start_time"/>
+        <result property="valid_end_time" column="valid_end_time"/>
+        <result property="receive_time" column="receive_time"/>
+        <result property="use_status" column="use_status"/>
+        <result property="use_time" column="use_time"/>
         <result property="createdAt" column="createdAt"/>
         <result property="updatedAt" column="updatedAt"/>
         <association property="coupon" foreignColumn="couponID"
@@ -68,16 +75,47 @@
     <resultMap type="com.example.alijavapta.domain.Coupon" id="couponMap">
         <id property="couponID" column="couponID"/>
         <result property="name" column="couponName"/>
-        <result property="condition" column="condition"/>
-        <result property="amount" column="amount"/>
+        <result property="couponID" column="couponID"/>
+        <result property="title" column="title"/>
         <result property="startDate" column="startDate"/>
         <result property="endDate" column="endDate"/>
-        <result property="description" column="description"/>
-        <result property="prerequisite" column="prerequisite"/>
-        <result property="status" column="couponStatus"/>
         <result property="createdAt" column="createdAt"/>
         <result property="updatedAt" column="updatedAt"/>
-        <association property="category" column="categoryID"
+        <result property="valid_start_time" column="valid_start_time"/>
+        <result property="valid_end_time" column="valid_end_time"/>
+        <result property="icon" column="icon"/>
+        <result property="with_sn" column="with_sn"/>
+        <result property="with_amount" column="with_amount"/>
+        <result property="used_amount" column="used_amount"/>
+        <result property="per_limit" column="per_limit"/>
+        <result property="quota" column="quota"/>
+        <result property="take_count" column="take_count"/>
+        <result property="used_count" column="used_count"/>
+        <result property="start_time" column="start_time"/>
+        <result property="end_time" column="end_time"/>
+        <result property="valid_days" column="valid_days"/>
+        <association property="status" column="status"
+                     foreignColumn="couponStatusID"
+                     javaType="com.example.alijavapta.domain.CouponStatus"
+                     resultMap="couponStatusMap"/>
+        <association property="valid_type" column="valid_type"
+                     foreignColumn="couponValidTypeID"
+                     javaType="com.example.alijavapta.domain.CouponValidType"
+                     resultMap="couponValidTypeMap"/>
+        <association property="type" column="type"
+                     foreignColumn="couponTypeID"
+                     javaType="com.example.alijavapta.domain.CouponType"
+                     resultMap="couponTypeMap"/>
+        <association property="create_user" column="create_user"
+                     foreignColumn="userID"
+                     javaType="com.example.alijavapta.domain.User"
+                     resultMap="simpleUserMap"/>
+        <association property="update_user" column="update_user"
+                     foreignColumn="userID"
+                     javaType="com.example.alijavapta.domain.User"
+                     resultMap="simpleUserMap"/>
+        <association property="discount_type" column="discount_type"
+                     foreignColumn="categoryID"
                      javaType="com.example.alijavapta.domain.CouponCategory"
                      resultMap="couponCategoryMap"/>
     </resultMap>
@@ -85,6 +123,27 @@
         <id property="categoryID" column="categoryID"/>
         <result property="name" column="couponCategoryName"/>
         <result property="status" column="couponCategoryStatus"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.CouponType"
+               id="couponTypeMap">
+        <id property="couponTypeID" column="couponTypeID"/>
+        <result property="title" column="couponTypeName"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.CouponValidType"
+               id="couponValidTypeMap">
+        <id property="couponValidTypeID" column="couponValidTypeID"/>
+        <result property="title" column="couponValidTypeName"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.CouponStatus"
+               id="couponStatusMap">
+        <id property="couponStatusID" column="couponStatusID"/>
+        <result property="title" column="couponStatusName"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
     </resultMap>
     <resultMap type="com.example.alijavapta.domain.Permission"
                id="permissionMap">
@@ -135,19 +194,64 @@
     <select id="CountUsers" resultType="java.lang.Integer">
         SELECT COUNT(1) FROM users;
     </select>
+    <select id="CountAllCoupons" resultType="java.lang.Integer"
+            parameterType="com.example.alijavapta.domain.Condition">
+        SELECT COUNT(1) FROM coupons
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="title != null and title != ''">
+                AND title = #{title}
+            </if>
+            <if test="status != -1">
+                AND status = #{status}
+            </if>
+            <if test="startDate != null">
+                AND startDate &lt; #{startDate}
+            </if>
+            <if test="endDate != null">
+                AND endDate &gt; #{endDate}
+            </if>
+        </trim>
+    </select>
+    <select id="ListAllCoupons" resultType="java.util.List"
+            resultMap="couponMap"
+            parameterType="com.example.alijavapta.domain.Condition">
+        SELECT *, t2.name as couponCategoryName, t5.title as couponTypeName, t6.title as
+        couponValidTypeName, t7.title as couponStatusName
+        FROM coupons t1
+            LEFT JOIN coupon_categories t2 ON t1.discount_type = t2.categoryID
+            LEFT JOIN coupon_types t5 ON T1.type = t5.couponTypeID
+            LEFT JOIN coupon_valid_types t6 ON T1.valid_type =
+        t6.couponValidTypeID
+            LEFT JOIN coupon_statuses t7 ON t1.status = t7.couponStatusID
+            LEFT JOIN users t3 on t1.create_user = t3.userID
+            LEFT JOIN users t4 on t1.update_user = t4.userID
+        <trim prefix="WHERE" prefixOverrides="AND">
+            <if test="title != null and title != ''">
+                AND t1.title = #{title}
+            </if>
+            <if test="status != -1">
+                AND t1.status = #{status}
+            </if>
+            <if test="startDate != null">
+                AND t1.startDate &lt; #{startDate}
+            </if>
+            <if test="endDate != null">
+                AND t1.endDate &gt; #{endDate}
+            </if>
+        </trim>
+    </select>
     <select id="ListCoupons" resultType="java.util.List"
             resultMap="couponRecordMap"
             parameterType="com.example.alijavapta.domain.Condition">
-        SELECT *, t5.name as couponName, t1.status as userStatus, t4.status
-            as couponStatus, t5.status as couponCategoryStatus,
-               t4.name as couponName
+        SELECT *, t1.status as userStatus, t4.status
+            as couponStatus, t5.status as couponCategoryStatus
         FROM users t1
         LEFT JOIN coupon_records t3 on t3.userID = t1.userID
         LEFT JOIN coupons t4 on t4.couponID = t3.couponID
-        LEFT JOIN coupon_categories t5 ON t5.categoryID = t4.categoryID
+        LEFT JOIN coupon_categories t5 ON t5.categoryID = t4.discount_type
         WHERE t1.userID = #{userID}
         <if test="status != -1">
-            AND status = #{status}
+            AND t4.status = #{status}
         </if>
         <if test="startDate != null">
             AND t4.startDate &lt; #{startDate}
@@ -164,7 +268,7 @@
         LEFT JOIN coupons t4 on t4.couponID = t3.couponID
         WHERE t1.userID = #{userID}
         <if test="status != -1">
-            AND status = #{status}
+            AND t4.status = #{status}
         </if>
         <if test="startDate != null">
             AND t4.startDate &lt; #{startDate}

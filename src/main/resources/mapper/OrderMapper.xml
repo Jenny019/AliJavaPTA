@@ -28,16 +28,75 @@
     <resultMap type="com.example.alijavapta.domain.Coupon" id="couponMap">
         <id property="couponID" column="couponID"/>
         <result property="name" column="couponName"/>
-        <result property="condition" column="condition"/>
-        <result property="amount" column="amount"/>
+        <result property="couponID" column="couponID"/>
+        <result property="title" column="title"/>
         <result property="startDate" column="startDate"/>
         <result property="endDate" column="endDate"/>
-        <result property="description" column="description"/>
-        <result property="prerequisite" column="prerequisite"/>
-        <result property="status" column="couponStatus"/>
-        <association property="category" column="categoryID"
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+        <result property="valid_start_time" column="valid_start_time"/>
+        <result property="valid_end_time" column="valid_end_time"/>
+        <result property="icon" column="icon"/>
+        <result property="with_sn" column="with_sn"/>
+        <result property="with_amount" column="with_amount"/>
+        <result property="used_amount" column="used_amount"/>
+        <result property="per_limit" column="per_limit"/>
+        <result property="quota" column="quota"/>
+        <result property="take_count" column="take_count"/>
+        <result property="used_count" column="used_count"/>
+        <result property="start_time" column="start_time"/>
+        <result property="end_time" column="end_time"/>
+        <result property="valid_days" column="valid_days"/>
+        <association property="status" column="status"
+                     foreignColumn="couponStatusID"
+                     javaType="com.example.alijavapta.domain.CouponStatus"
+                     resultMap="couponStatusMap"/>
+        <association property="valid_type" column="valid_type"
+                     foreignColumn="couponValidTypeID"
+                     javaType="com.example.alijavapta.domain.CouponValidType"
+                     resultMap="couponValidTypeMap"/>
+        <association property="type" column="type"
+                     foreignColumn="couponTypeID"
+                     javaType="com.example.alijavapta.domain.CouponType"
+                     resultMap="couponTypeMap"/>
+        <association property="create_user" column="create_user"
+                     foreignColumn="userID"
+                     javaType="com.example.alijavapta.domain.User"
+                     resultMap="simpleUserMap"/>
+        <association property="update_user" column="update_user"
+                     foreignColumn="userID"
+                     javaType="com.example.alijavapta.domain.User"
+                     resultMap="simpleUserMap"/>
+        <association property="discount_type" column="discount_type"
+                     foreignColumn="categoryID"
                      javaType="com.example.alijavapta.domain.CouponCategory"
                      resultMap="couponCategoryMap"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.CouponCategory" id="couponCategoryMap">
+        <id property="categoryID" column="categoryID"/>
+        <result property="name" column="couponCategoryName"/>
+        <result property="status" column="couponCategoryStatus"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.CouponType"
+               id="couponTypeMap">
+        <id property="couponTypeID" column="couponTypeID"/>
+        <result property="title" column="couponTypeName"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.CouponValidType"
+               id="couponValidTypeMap">
+        <id property="couponValidTypeID" column="couponValidTypeID"/>
+        <result property="title" column="couponValidTypeName"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.CouponStatus"
+               id="couponStatusMap">
+        <id property="couponStatusID" column="couponStatusID"/>
+        <result property="title" column="couponStatusName"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
     </resultMap>
     <resultMap type="com.example.alijavapta.domain.Address" id="addressMap">
         <id property="addressID" column="addressID"/>
@@ -48,11 +107,6 @@
         <result property="building" column="building"/>
         <result property="postalCode" column="postalCode"/>
         <result property="default" column="default"/>
-    </resultMap>
-    <resultMap type="com.example.alijavapta.domain.CouponCategory" id="couponCategoryMap">
-        <id property="categoryID" column="categoryID"/>
-        <result property="name" column="couponCategoryName"/>
-        <result property="status" column="couponCategoryStatus"/>
     </resultMap>
     <resultMap type="com.example.alijavapta.domain.LineItems" id="lineItemMap">
         <id property="lineItemID" column="lineItemID"/>

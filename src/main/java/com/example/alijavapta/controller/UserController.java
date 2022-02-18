@@ -27,7 +27,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-@RestController
+@RestController(value = "/api")
 @CrossOrigin(origins = "*")
 public class UserController {
     @Resource
@@ -42,7 +42,7 @@ public class UserController {
     @Autowired
     private IGlobalCache globalCache;
 
-    @RequestMapping(value="/index")
+    @GetMapping(value="/index")
     public ModelAndView index() {
         ModelAndView mv = new ModelAndView("index");
         Subject currUser = SecurityUtils.getSubject();
@@ -50,38 +50,45 @@ public class UserController {
         return new ModelAndView("index");
     }
 
-    @RequestMapping(value = "/findAllUser")
+    @PostMapping(value = "/findAllUser")
     @RequiresRoles("管理员")
     @RequiresPermissions("仪表盘") // 权限管理.
-    public Response getAllUser() {
+    public Response getAllUser(@RequestBody Condition condition) {
         return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
-                userMapper.CountUsers(),
-                userMapper.ListUsers());
+                userMapper.CountUsers(condition),
+                userMapper.ListUsers(condition));
     }
 
-    @RequestMapping(value = "/findCoupons")
-    public Response findCoupons(Condition condition) {
+    @PostMapping(value = "/findAllCoupons")
+    public Response findAllCoupons(@RequestBody Condition condition) {
         return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
-                userMapper.CountCoupons(),
+                userMapper.CountAllCoupons(condition),
+                userMapper.ListAllCoupons(condition));
+    }
+
+    @PostMapping(value = "/findUserCoupons")
+    public Response findUserCoupons(@RequestBody Condition condition) {
+        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
+                userMapper.CountCoupons(condition),
                 userMapper.ListCoupons(condition));
     }
 
-    @RequestMapping(value = "/findAddresses")
-    public Response findAddress(Condition condition) {
+    @PostMapping(value = "/findAddresses")
+    public Response findAddress(@RequestBody Condition condition) {
         return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
-                userMapper.CountAddresses(),
+                userMapper.CountAddresses(condition),
                 userMapper.ListAddresses(condition));
     }
 
-    @RequestMapping(value = "/findRoles")
-    public Response findRoles(User user) {
+    @PostMapping(value = "/findRoles")
+    public Response findRoles(@RequestBody User user) {
         return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
                 0,
                 userMapper.ListRoles(user));
     }
 
-    @RequestMapping(value = "/findPermissions")
-    public Response findPermissions(Role role) {
+    @PostMapping(value = "/findPermissions")
+    public Response findPermissions(@RequestBody Role role) {
         return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
                 0,
                 userMapper.ListPermissions(role));
@@ -198,8 +205,8 @@ public class UserController {
                 " or password not correct");
     }
 
-    @RequestMapping("/info")
-    public Response Info(User user) {
+    @PostMapping("/info")
+    public Response Info(@RequestBody  User user) {
         user.setRoles(userMapper.ListRoles(user));
         return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", 0, user);
     }
@@ -230,7 +237,7 @@ public class UserController {
     }
 
     @PutMapping("/updateUser")
-    public int updateUser(User user) {
+    public int updateUser(@RequestBody  User user) {
         return userMapper.UpdateUser(user);
     }
 
@@ -252,8 +259,8 @@ public class UserController {
                 "Verification codes do not match.");
     }
 
-    @RequestMapping("/deleteUser")
-    public int deleteUser(User user) {
+    @PostMapping("/deleteUser")
+    public int deleteUser(@RequestBody User user) {
         return userMapper.DeleteUser(user);
     }
 

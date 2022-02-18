@@ -5,12 +5,14 @@ import com.example.alijavapta.domain.*;
 import java.util.List;
 
 public interface UserMapper {
-    int CountUsers();
-    int CountCoupons();
-    int CountAddresses();
+    int CountUsers(Condition condition);
+    int CountCoupons(Condition condition);
+    int CountAllCoupons(Condition condition);
+    int CountAddresses(Condition condition);
     int CountTransactions(Condition condition);
 
-    List<User> ListUsers();
+    List<User> ListUsers(Condition condition);
+    List<Coupon> ListAllCoupons(Condition condition);
     List<CouponRecord> ListCoupons(Condition condition);
     List<Address> ListAddresses(Condition condition);
     List<Role> ListRoles(User user);
