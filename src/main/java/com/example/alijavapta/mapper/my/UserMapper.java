@@ -32,4 +32,8 @@ public interface UserMapper {
 
     int CreateTransaction(Transaction transaction);
     Transaction GetTransaction(Transaction transaction);
+
+    int CreateCoupon(Coupon coupon);
+    int UpdateCoupon(Coupon coupon);
+    int DeleteCoupon(Coupon coupon);
 }

@@ -31,6 +31,10 @@
         <id property="id" column="userID"/>
         <result property="userName" column="userName"/>
     </resultMap>
+    <resultMap type="com.example.alijavapta.domain.User" id="simpleUserMap2">
+        <id property="id" column="updateUserID"/>
+        <result property="userName" column="updateUserName"/>
+    </resultMap>
     <resultMap type="com.example.alijavapta.domain.UserRole" id="usersRolesMap">
         <id column="usersRolesID" property="usersRolesID"/>
         <result property="createdAt" column="createdAt"/>
@@ -113,7 +117,7 @@
         <association property="update_user" column="update_user"
                      foreignColumn="userID"
                      javaType="com.example.alijavapta.domain.User"
-                     resultMap="simpleUserMap"/>
+                     resultMap="simpleUserMap2"/>
         <association property="discount_type" column="discount_type"
                      foreignColumn="categoryID"
                      javaType="com.example.alijavapta.domain.CouponCategory"
@@ -216,7 +220,8 @@
             resultMap="couponMap"
             parameterType="com.example.alijavapta.domain.Condition">
         SELECT *, t2.name as couponCategoryName, t5.title as couponTypeName, t6.title as
-        couponValidTypeName, t7.title as couponStatusName
+        couponValidTypeName, t7.title as couponStatusName, t4.userName as
+        updateUserName, t4.userID as updateUserID
         FROM coupons t1
             LEFT JOIN coupon_categories t2 ON t1.discount_type = t2.categoryID
             LEFT JOIN coupon_types t5 ON T1.type = t5.couponTypeID
@@ -227,7 +232,7 @@
             LEFT JOIN users t4 on t1.update_user = t4.userID
         <trim prefix="WHERE" prefixOverrides="AND">
             <if test="title != null and title != ''">
-                AND t1.title = #{title}
+                AND t1.title LIKE CONCAT('%', #{title}, '%')
             </if>
             <if test="status != -1">
                 AND t1.status = #{status}
@@ -392,6 +397,97 @@
     <delete id="DeleteUser"
             parameterType="com.example.alijavapta.domain.User">
         DELETE FROM users WHERE userID = #{id}
+    </delete>
+    <insert id="CreateCoupon"
+            parameterType="com.example.alijavapta.domain.Coupon">
+        <selectKey order="BEFORE" keyProperty="couponID"
+                   resultType="java.lang.String">
+            SELECT (CONCAT(DATE_FORMAT(NOW(),'%Y%m%d%H%i%s'),
+            LPAD(nextval('coupons'), 6, 0)))
+        </selectKey>
+        INSERT INTO coupons (COUPONID, DISCOUNT_TYPE, TITLE, VALID_START_TIME,
+                             VALID_END_TIME, CREATEDAT, UPDATEDAT, ICON,
+                             TYPE, WITH_SN, WITH_AMOUNT, USED_AMOUNT, PER_LIMIT,
+                             QUOTA, TAKE_COUNT, USED_COUNT, START_TIME,
+                             END_TIME, VALID_TYPE, VALID_DAYS, STATUS,
+                             CREATE_USER, UPDATE_USER)
+            VALUE (#{couponID}, #{discount_type.categoryID}, #{title},
+                   #{valid_start_time}, #{valid_end_time}, NOW(), NOW(),
+                   #{icon}, #{type.couponTypeID}, #{with_sn}, #{with_amount},
+                   #{used_amount}, #{per_limit}, #{quota}, #{take_count},
+                   #{used_count}, #{start_time}, #{end_time},
+                   #{valid_type.couponValidTypeID}, #{valid_days},
+                   #{status.couponStatusID}, #{create_user.id},
+                   #{update_user.id})
+    </insert>
+    <update id="UpdateCoupon"
+            parameterType="com.example.alijavapta.domain.Coupon">
+        UPDATE coupons
+        <trim prefix="SET" suffixOverrides=",">
+            updatedAt = NOW(),
+            <if test="title != null and title != ''">
+                title = #{title},
+            </if>
+            <if test="discount_type != null">
+                discount_type = #{discount_type.categoryID},
+            </if>
+            <if test="valid_start_time != null">
+                valid_start_time = #{valid_start_time},
+            </if>
+            <if test="valid_end_time != null">
+                valid_end_time = #{endDate},
+            </if>
+            <if test="icon != null">
+                icon = #{icon},
+            </if>
+            <if test="type != null">
+                type = #{type.couponTypeID},
+            </if>
+            <if test="with_sn != null">
+                with_sn = #{with_sn},
+            </if>
+            <if test="with_amount != null">
+                with_amount = #{with_amount},
+            </if>
+            <if test="used_amount != null">
+                used_amount = #{used_amount},
+            </if>
+            <if test="per_limit != null">
+                per_limit = #{per_limit},
+            </if>
+            <if test="quota != null">
+                quota = #{quota},
+            </if>
+            <if test="take_count != null">
+                take_count = #{take_count},
+            </if>
+            <if test="used_count != null">
+                used_count = #{used_count},
+            </if>
+            <if test="start_time != null">
+                start_time = #{start_time},
+            </if>
+            <if test="end_time != null">
+                end_time = #{end_time},
+            </if>
+            <if test="valid_type != null">
+                valid_type = #{valid_type.couponValidTypeID},
+            </if>
+            <if test="valid_days != null">
+                valid_days = #{valid_days},
+            </if>
+            <if test="status != null">
+                status = #{status.couponStatusID},
+            </if>
+            <if test="update_user != null">
+                update_user = #{update_user.id},
+            </if>
+        </trim>
+        WHERE couponID = #{couponID}
+    </update>
+    <delete id="DeleteCoupon"
+            parameterType="com.example.alijavapta.domain.Coupon">
+        DELETE FROM coupons WHERE couponID = #{couponID}
     </delete>
     <insert id="CreateProperty"
             parameterType="com.example.alijavapta.domain.User">

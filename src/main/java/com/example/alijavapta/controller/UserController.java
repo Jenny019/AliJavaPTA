@@ -302,6 +302,48 @@ public class UserController {
         return new ModelAndView("login");
     }
 
+    @PostMapping("/createCoupon")
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor =
+            Exception.class, value = "myTransactionManager")
+    public Response createCoupon(@RequestBody Coupon coupon) throws NoSuchAlgorithmException {
+        int count = userMapper.CreateCoupon(coupon);
+        if (count > 0) {
+            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", 0,
+                    coupon);
+        } else {
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",0,
+                    "Failed to create coupon.");
+        }
+    }
+
+    @PutMapping("/updateCoupon")
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor =
+            Exception.class, value = "myTransactionManager")
+    public Response updateCoupon(@RequestBody Coupon coupon) throws NoSuchAlgorithmException {
+        int count = userMapper.UpdateCoupon(coupon);
+        if (count > 0) {
+            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", 0,
+                    coupon);
+        } else {
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",0,
+                    "Failed to create coupon.");
+        }
+    }
+
+    @DeleteMapping("/deleteCoupon")
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor =
+            Exception.class, value = "myTransactionManager")
+    public Response deleteCoupon(@RequestBody Coupon coupon) throws NoSuchAlgorithmException {
+        int count = userMapper.DeleteCoupon(coupon);
+        if (count > 0) {
+            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", 0,
+                    null);
+        } else {
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",0,
+                    "Failed to create coupon.");
+        }
+    }
+
     @PostMapping("/getSMSCode")
     public Response getSMSCode(@RequestBody Condition condition) {
         String code = SMSService.getNonce_str(6);
