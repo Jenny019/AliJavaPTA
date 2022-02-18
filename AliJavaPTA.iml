@@ -43,6 +43,8 @@
     <orderEntry type="library" name="crypto-js" level="application" />
     <orderEntry type="library" name="jquery-3.6.0" level="application" />
     <orderEntry type="library" name="jquery.md5" level="application" />
+    <orderEntry type="library" name="bootstrap.bundle" level="application" />
+    <orderEntry type="library" name="font-awesome" level="application" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-jdbc:2.6.3" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter:2.6.3" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:2.6.3" level="project" />
@@ -301,7 +303,12 @@
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.tomcat.embed:tomcat-embed-core:9.0.56" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.tomcat.embed:tomcat-embed-el:9.0.56" level="project" />
     <orderEntry type="library" scope="PROVIDED" name="Maven: org.apache.tomcat.embed:tomcat-embed-websocket:9.0.56" level="project" />
-    <orderEntry type="library" name="bootstrap.bundle" level="application" />
-    <orderEntry type="library" name="font-awesome" level="application" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-jta-atomikos:2.6.3" level="project" />
+    <orderEntry type="library" name="Maven: com.atomikos:transactions-jms:4.0.6" level="project" />
+    <orderEntry type="library" name="Maven: com.atomikos:transactions-jta:4.0.6" level="project" />
+    <orderEntry type="library" name="Maven: com.atomikos:transactions-api:4.0.6" level="project" />
+    <orderEntry type="library" scope="RUNTIME" name="Maven: com.atomikos:transactions:4.0.6" level="project" />
+    <orderEntry type="library" name="Maven: com.atomikos:atomikos-util:4.0.6" level="project" />
+    <orderEntry type="library" name="Maven: com.atomikos:transactions-jdbc:4.0.6" level="project" />
   </component>
 </module>
