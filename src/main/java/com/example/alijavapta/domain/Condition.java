@@ -18,10 +18,19 @@ public class Condition {
     private Date endDate;
     private long categoryID = -1;
     private String title;
-    private long productID = -1;
+    private String productID;
     private RedisKey redisKey;
     private int redisKeyVal = -1;
     private int transactionType = -1;
+    private String sign;
+
+    public String getSign() {
+        return sign;
+    }
+
+    public void setSign(String sign) {
+        this.sign = sign;
+    }
 
     public int getPage() {
         return page;
@@ -81,11 +90,11 @@ public class Condition {
         this.redisKey = redisKey;
     }
 
-    public long getProductID() {
+    public String getProductID() {
         return productID;
     }
 
-    public void setProductID(long productID) {
+    public void setProductID(String productID) {
         this.productID = productID;
     }
 

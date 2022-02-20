@@ -435,7 +435,7 @@
                 valid_start_time = #{valid_start_time},
             </if>
             <if test="valid_end_time != null">
-                valid_end_time = #{endDate},
+                valid_end_time = #{valid_end_time},
             </if>
             <if test="icon != null">
                 icon = #{icon},

@@ -27,7 +27,7 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
-@RestController(value = "/api")
+@RestController()
 @CrossOrigin(origins = "*")
 public class UserController {
     @Resource
