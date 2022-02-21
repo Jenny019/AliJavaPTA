@@ -4,7 +4,54 @@
     <meta charset="UTF-8">
     <title>Title</title>
 </head>
+<style type="text/css">
+    .shopIndex__half-circle {
+        width: 2vw;
+        height: 2vw;
+        position: absolute;
+        top: calc(50% - 1vw);
+        background: white;
+        border-radius: 50%;
+    }
+    .shopIndex__text {
+        font-size: 1.2vw;
+    }
+</style>
 <body>
-
+<div style="display: flex; flex-wrap: wrap;">
+    <div th:each="category: ${categories}" style="padding: .85vw">
+        <a th:href="${'/category/' + category.categoryID}">
+            <div style="display: flex; justify-content: center; align-items:
+            center; flex-direction: column">
+            <div>
+                <img style="width: 5vw; height: 5vw;" th:src="${category.icon}"
+                     alt="" />
+            </div>
+            <div class="shopIndex__text" th:text="${category.name}"></div>
+            </div>
+        </a>
+    </div>
+</div>
+<div style="display: flex; flex-wrap: wrap;">
+    <div th:each="coupon: ${coupons}" style="padding: .85vw">
+        <a style="text-decoration: none; color: white;"
+           class="shopIndex__text"
+           th:href="${'/coupon/' + coupon.couponID}">
+            <div style="position: relative; background-color: red; width:
+            15vw; height: 8vw; display: flex;
+            flex-direction: column; align-items:
+            center;
+            justify-content: center;">
+                <div class="shopIndex__half-circle" style="left: -1vw;"></div>
+                <div class="shopIndex__half-circle" style="right: -1vw;"></div>
+                <div th:text="${coupon.title}"></div>
+                <div
+                        th:text="${coupon.with_amount > 0? ('满' + coupon.with_amount + '元可用'): '' }"></div>
+                <div
+                        th:text="${(coupon.with_sn == '' or coupon.with_sn == null)? '全场通用': ''}"></div>
+            </div>
+        </a>
+    </div>
+</div>
 </body>
 </html>

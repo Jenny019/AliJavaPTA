@@ -64,6 +64,17 @@
                      javaType="com.example.alijavapta.domain.Coupon"
                      resultMap="couponMap"/>
     </resultMap>
+    <resultMap type="com.example.alijavapta.domain.CouponRecord"
+               id="couponRecordMap2">
+        <id property="couponRecordID" column="couponRecordID"/>
+        <result property="valid_start_time" column="valid_start_time"/>
+        <result property="valid_end_time" column="valid_end_time"/>
+        <result property="receive_time" column="receive_time"/>
+        <result property="use_status" column="use_status"/>
+        <result property="use_time" column="use_time"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+    </resultMap>
     <resultMap type="com.example.alijavapta.domain.Address" id="addressMap">
         <id property="addressID" column="addressID"/>
         <result property="country" column="country"/>
@@ -122,6 +133,10 @@
                      foreignColumn="categoryID"
                      javaType="com.example.alijavapta.domain.CouponCategory"
                      resultMap="couponCategoryMap"/>
+        <association property="record" column="couponID"
+                     foreignColumn="couponID"
+                     javaType="com.example.alijavapta.domain.CouponRecord"
+                     resultMap="couponRecordMap2"/>
     </resultMap>
     <resultMap type="com.example.alijavapta.domain.CouponCategory" id="couponCategoryMap">
         <id property="categoryID" column="categoryID"/>
@@ -200,19 +215,21 @@
     </select>
     <select id="CountAllCoupons" resultType="java.lang.Integer"
             parameterType="com.example.alijavapta.domain.Condition">
-        SELECT COUNT(1) FROM coupons
+        SELECT COUNT(1) FROM coupons t1
+            LEFT JOIN coupon_records t2 ON t2.couponID = t1.couponID AND
+            t2.userID = #{userID}
         <trim prefix="WHERE" prefixOverrides="AND">
             <if test="title != null and title != ''">
-                AND title = #{title}
+                AND t1.title LIKE CONCAT('%', #{title}, '%')
             </if>
             <if test="status != -1">
-                AND status = #{status}
+                AND t1.status = #{status}
             </if>
             <if test="startDate != null">
-                AND startDate &lt; #{startDate}
+                AND t1.start_time &lt; #{startDate}
             </if>
             <if test="endDate != null">
-                AND endDate &gt; #{endDate}
+                AND t1.end_time &gt; #{endDate}
             </if>
         </trim>
     </select>
@@ -230,6 +247,8 @@
             LEFT JOIN coupon_statuses t7 ON t1.status = t7.couponStatusID
             LEFT JOIN users t3 on t1.create_user = t3.userID
             LEFT JOIN users t4 on t1.update_user = t4.userID
+            LEFT JOIN coupon_records t8 ON t8.couponID = t1.couponID AND
+        t8.userID=#{userID}
         <trim prefix="WHERE" prefixOverrides="AND">
             <if test="title != null and title != ''">
                 AND t1.title LIKE CONCAT('%', #{title}, '%')
@@ -238,10 +257,10 @@
                 AND t1.status = #{status}
             </if>
             <if test="startDate != null">
-                AND t1.startDate &lt; #{startDate}
+                AND t1.start_time &lt; #{startDate}
             </if>
             <if test="endDate != null">
-                AND t1.endDate &gt; #{endDate}
+                AND t1.end_time &gt; #{endDate}
             </if>
         </trim>
     </select>

@@ -30,6 +30,15 @@ public class Coupon implements Serializable {
     private int valid_days;
     private User create_user;
     private User update_user;
+    private CouponRecord record;
+
+    public CouponRecord getRecord() {
+        return record;
+    }
+
+    public void setRecord(CouponRecord record) {
+        this.record = record;
+    }
 
     public String getCouponID() {
         return couponID;

@@ -22,12 +22,14 @@
     <resultMap type="com.example.alijavapta.domain.ProductCategory" id="productCategoryMap">
         <id property="categoryID" column="categoryID"/>
         <result property="name" column="productCategoryName"/>
+        <result property="icon" column="icon"/>
         <result property="status" column="productCategoryStatus"/>
     </resultMap>
     <resultMap type="com.example.alijavapta.domain.ProductCategory"
                id="productCategoryMap2">
         <id property="categoryID" column="categoryID"/>
         <result property="name" column="name"/>
+        <result property="icon" column="icon"/>
         <result property="status" column="status"/>
     </resultMap>
     <resultMap type="com.example.alijavapta.domain.ProductVariant"

@@ -5,10 +5,19 @@ import java.util.Date;
 
 public class ProductCategory implements Serializable {
     private String categoryID;
+    private String icon;
     private String name;
     private int status = -1;
     private Date createdAt;
     private Date updatedAt;
+
+    public String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(String icon) {
+        this.icon = icon;
+    }
 
     public Date getCreatedAt() {
         return createdAt;
