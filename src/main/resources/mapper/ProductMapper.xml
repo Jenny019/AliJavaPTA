@@ -124,11 +124,13 @@
             <if test="status != -1">
                 AND t1.status = #{status}
             </if>
-            <if test="categoryID != -1">
-                AND t2.categoryID = #{categoryID}
+            <if test="category.categoryID != null">
+                AND t2.categoryID = #{category.categoryID}
+            </if>
+            <if test="productID != null">
+                AND t1.productID = #{productID}
             </if>
         </trim>
-        WHERE t1.productID = #{productID}
     </select>
     <select id="ListProductVariants" resultMap="productVariantMap"
             parameterType="com.example.alijavapta.domain.Condition">

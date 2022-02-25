@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <style type="text/css">
     .shopIndex__half-circle {
@@ -20,14 +21,16 @@
 <body>
 <div style="display: flex; flex-wrap: wrap;">
     <div th:each="category: ${categories}" style="padding: .85vw">
-        <a th:href="${'/category/' + category.categoryID}">
+        <a th:href="${'/product/category/' + category.categoryID}">
             <div style="display: flex; justify-content: center; align-items:
             center; flex-direction: column">
             <div>
-                <img style="width: 5vw; height: 5vw;" th:src="${category.icon}"
+                <img style="width: 5vw; height: 5vw;"
+                     th:src="${category.icon}"
                      alt="" />
             </div>
-            <div class="shopIndex__text" th:text="${category.name}"></div>
+            <div class="shopIndex__text"
+                 th:text="${category.name}"></div>
             </div>
         </a>
     </div>
@@ -36,13 +39,12 @@
     <div th:each="coupon: ${coupons}" style="padding: .85vw">
         <a style="text-decoration: none; color: white;"
            class="shopIndex__text"
-           th:href="${'/coupon/' + coupon.couponID}">
-            <div style="position: relative; background-color: red; width:
-            15vw; height: 8vw; display: flex;
-            flex-direction: column; align-items:
-            center;
-            justify-content: center;">
-                <div class="shopIndex__half-circle" style="left: -1vw;"></div>
+           th:href="${coupon.count == 0? '/coupon/' + coupon.couponID: 'javascript:void(0)'}">
+            <div
+                    th:style="'background-color: ' + ${coupon.count == 0? 'red': 'gray'} +'; width: 15vw; height: 8vw;'"
+                 class="d-flex flex-sm-column justify-content-center align-items-center position-relative">
+                <div class="shopIndex__half-circle"
+                     style="left: -1vw;" th:text="${coupon.count}"></div>
                 <div class="shopIndex__half-circle" style="right: -1vw;"></div>
                 <div th:text="${coupon.title}"></div>
                 <div
