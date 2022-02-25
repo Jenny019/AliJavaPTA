@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.alijavapta.mapper.bank.BankMapper">
+    <resultMap type="com.example.alijavapta.domain.Bank" id="bankMap">
+        <id property="id" column="accountID"/>
+        <result property="balance" column="balance"/>
+<!--        <result property="createdAt" column="createdAt"/>-->
+<!--        <result property="updatedAt" column="updatedAt"/>-->
+    </resultMap>
+    <resultMap type="com.example.alijavapta.domain.Transaction"
+               id="transactionMap">
+        <id property="transactionID" column="transactionID"/>
+        <result property="userID" column="userID"/>
+        <result property="amount" column="amount"/>
+        <result property="type" column="type"/>
+        <result property="associationID" column="associationID"/>
+        <result property="createdAt" column="createdAt"/>
+        <result property="updatedAt" column="updatedAt"/>
+    </resultMap>
+    <update id="increase"
+            parameterType="com.example.alijavapta.domain.Transaction">
+        UPDATE accounts set balance = balance + ${amount}, updatedAt = now()
+    </update>
+    <update id="subtract"
+            parameterType="com.example.alijavapta.domain.Transaction">
+        UPDATE accounts set balance = balance - ${amount}, updatedAt = now()
+    </update>
+</mapper>

@@ -7,6 +7,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
+
 @Service
 @Slf4j
 public class RedisService {
@@ -24,7 +26,7 @@ public class RedisService {
         return ops.get(name);
     }
 
-    public boolean setString(String key,String value){
+    public boolean setString(String key, String value){
         ValueOperations<String, String> ops=stringRedisTemplate.opsForValue();
         ops.set(key,value);
         return true;
@@ -34,4 +36,16 @@ public class RedisService {
         ValueOperations<String, String> ops=stringRedisTemplate.opsForValue();
         return ops.get(key);
     }
+
+    public String getAndDeleteString(String key){
+        ValueOperations<String, String> ops=stringRedisTemplate.opsForValue();
+        return ops.getAndDelete(key);
+    }
+
+    public boolean setString(String key, String value, Duration duration){
+        ValueOperations<String, String> ops=stringRedisTemplate.opsForValue();
+        ops.set(key,value, duration);
+        return true;
+    }
+
 }

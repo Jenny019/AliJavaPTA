@@ -3,10 +3,11 @@ package com.example.alijavapta.controller;
 import com.example.alijavapta.config.ResponseCode;
 import com.example.alijavapta.domain.*;
 import com.example.alijavapta.mapper.my.ProductMapper;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -15,6 +16,25 @@ import java.util.List;
 public class ProductController {
     @Resource
     private ProductMapper productMapper;
+
+    @GetMapping(value = "/category/{categoryID}")
+    public ModelAndView getAllProduct(@PathVariable int categoryID) {
+        Condition condition = new Condition();
+        condition.setCategoryID(categoryID);
+        ModelAndView mv = new ModelAndView("product/index");
+        mv.addObject("products", productMapper.ListProducts(condition));
+        return mv;
+    }
+
+    @GetMapping(value = "/id/{productID}")
+    public ModelAndView getProduct(@PathVariable String productID) {
+        Product product = new Product();
+        product.setProductID(productID);
+        product.setCategory(new ProductCategory());
+        ModelAndView mv = new ModelAndView("product/detail");
+        mv.addObject("product", productMapper.GetProduct(product));
+        return mv;
+    }
 
     @PostMapping(value = "/findAllProduct")
     public Response getAllProduct(@RequestBody Condition condition) {

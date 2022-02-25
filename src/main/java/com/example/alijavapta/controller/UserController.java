@@ -5,6 +5,7 @@ import com.example.alijavapta.config.ResponseCode;
 import com.example.alijavapta.domain.*;
 import com.example.alijavapta.mapper.alipay.AlipayMapper;
 import com.example.alijavapta.mapper.bank.BankMapper;
+import com.example.alijavapta.mapper.my.RedisService;
 import com.example.alijavapta.mapper.my.UserMapper;
 import com.example.alijavapta.utils.IGlobalCache;
 import com.example.alijavapta.utils.SMSService;
@@ -29,6 +30,7 @@ import java.util.List;
 
 @RestController()
 @CrossOrigin(origins = "*")
+@RequestMapping(value = "/")
 public class UserController {
     @Resource
     private UserMapper userMapper;
@@ -57,20 +59,6 @@ public class UserController {
         return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
                 userMapper.CountUsers(condition),
                 userMapper.ListUsers(condition));
-    }
-
-    @PostMapping(value = "/findAllCoupons")
-    public Response findAllCoupons(@RequestBody Condition condition) {
-        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
-                userMapper.CountAllCoupons(condition),
-                userMapper.ListAllCoupons(condition));
-    }
-
-    @PostMapping(value = "/findUserCoupons")
-    public Response findUserCoupons(@RequestBody Condition condition) {
-        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
-                userMapper.CountCoupons(condition),
-                userMapper.ListCoupons(condition));
     }
 
     @PostMapping(value = "/findAddresses")
@@ -300,48 +288,6 @@ public class UserController {
     @GetMapping("/login")
     public ModelAndView login() {
         return new ModelAndView("login");
-    }
-
-    @PostMapping("/createCoupon")
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor =
-            Exception.class, value = "myTransactionManager")
-    public Response createCoupon(@RequestBody Coupon coupon) throws NoSuchAlgorithmException {
-        int count = userMapper.CreateCoupon(coupon);
-        if (count > 0) {
-            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", 0,
-                    coupon);
-        } else {
-            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",0,
-                    "Failed to create coupon.");
-        }
-    }
-
-    @PutMapping("/updateCoupon")
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor =
-            Exception.class, value = "myTransactionManager")
-    public Response updateCoupon(@RequestBody Coupon coupon) throws NoSuchAlgorithmException {
-        int count = userMapper.UpdateCoupon(coupon);
-        if (count > 0) {
-            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", 0,
-                    coupon);
-        } else {
-            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",0,
-                    "Failed to create coupon.");
-        }
-    }
-
-    @DeleteMapping("/deleteCoupon")
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor =
-            Exception.class, value = "myTransactionManager")
-    public Response deleteCoupon(@RequestBody Coupon coupon) throws NoSuchAlgorithmException {
-        int count = userMapper.DeleteCoupon(coupon);
-        if (count > 0) {
-            return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", 0,
-                    null);
-        } else {
-            return new Response(ResponseCode.FAIL.ordinal(), "FAIL",0,
-                    "Failed to create coupon.");
-        }
     }
 
     @PostMapping("/getSMSCode")

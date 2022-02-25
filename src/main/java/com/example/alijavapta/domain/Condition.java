@@ -7,6 +7,8 @@ import java.util.Date;
 
 public class Condition {
     private String userID;
+    private String couponID;
+    private String code;
     private String userName;
     private String phone;
     private String roleID;
@@ -23,6 +25,22 @@ public class Condition {
     private int redisKeyVal = -1;
     private int transactionType = -1;
     private String sign;
+
+    public String getCouponID() {
+        return couponID;
+    }
+
+    public void setCouponID(String couponID) {
+        this.couponID = couponID;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
 
     public String getSign() {
         return sign;

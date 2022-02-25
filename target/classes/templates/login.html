@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Spring Boot Thymeleaf</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+</head>
+<body>
+<div class="container">
+    <br>
+    <p class="text-center">Login or Register</p>
+    <hr>
+    <div class="row">
+        <p></p>
+        <aside class="col-sm-4 d-sm-flex justify-content-center">
+            <aside class="col-sm-12">
+            <div class="card">
+                <article class="card-body">
+                    <h4 class="card-title text-center mb-4 mt-1">Register</h4>
+                    <hr>
+                    <p class="text-success text-center"
+                       id="register-message"></p>
+                    <form method="post">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                                </div>
+                                <input name="userName"
+                                       id="register-userName"
+                                       class="form-control"
+                                       placeholder="Email or phone" type="text"
+                                       required>
+                            </div> <!-- input-group.// -->
+                        </div> <!-- form-group// -->
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                                </div>
+                                <input name="password"
+                                       id="register-password"
+                                       class="form-control"
+                                       placeholder="Password"
+                                       type="password"
+                                       required>
+                            </div> <!-- input-group.// -->
+                        </div> <!-- form-group// -->
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                                </div>
+                                <input class="form-control"
+                                       id="register-password-confirmation"
+                                       placeholder="Password confirmation"
+                                       type="password"
+                                       required>
+                            </div> <!-- input-group.// -->
+                        </div> <!-- form-group// -->
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-phone"></i>
+                                    </span>
+                                </div>
+                                <input name="phone"
+                                       id="register-phone"
+                                       class="form-control"
+                                       placeholder="Phone"
+                                       type="text"
+                                       required>
+                                <div class="input-group-append"
+                                     id="register-send-code">
+                                    <span class="input-group-text">
+                                        <i class="fa fa-code"></i>
+                                    </span>
+                                </div>
+                            </div> <!-- input-group.// -->
+                        </div> <!-- form-group// -->
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-code"></i></span>
+                                </div>
+                                <input id="register-code"
+                                       class="form-control"
+                                       placeholder="Verification code"
+                                       type="text"
+                                       required>
+                            </div> <!-- input-group.// -->
+                        </div> <!-- form-group// -->
+                        <div class="form-group">
+                            <button type="button"
+                                    onclick="onSubmitRegister()"
+                                    class="btn btn-primary btn-block">Register
+                            </button>
+                        </div> <!-- form-group// -->
+                    </form>
+                </article>
+            </div> <!-- card.// -->
+            </aside>
+        </aside>
+        <aside class="col-sm-4 d-sm-flex justify-content-center">
+            <p></p>
+            <aside class="col-sm-12">
+            <div class="card">
+                <article class="card-body">
+                    <h4 class="card-title text-center mb-4 mt-1">Sign in</h4>
+                    <hr>
+                    <p class="text-success text-center" id="login-message"></p>
+                    <form id="login-form">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                                </div>
+                                <input name="userName" class="form-control"
+                                       id="login-userName"
+                                       placeholder="Email or phone" type="text"
+                                       required>
+                            </div> <!-- input-group.// -->
+                        </div> <!-- form-group// -->
+                        <div class="form-group">
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                                </div>
+                                <input name="password"
+                                       id="login-password"
+                                       class="form-control"
+                                       placeholder="Password"
+                                       type="password"
+                                       required>
+                            </div> <!-- input-group.// -->
+                        </div> <!-- form-group// -->
+                        <div class="form-group">
+                            <button type="button"
+                                    onclick="onSubmitLogin()"
+                                    class="btn btn-primary btn-block"> Login  </button>
+                        </div> <!-- form-group// -->
+                    </form>
+                </article>
+            </div> <!-- card.// -->
+            </aside>
+        </aside>
+        <aside class="col-sm-4 d-sm-flex justify-content-center">
+            <p></p>
+            <aside class="col-sm-12">
+                <div class="card">
+                    <article class="card-body">
+                        <h4 class="card-title text-center mb-4 mt-1">Reset
+                            password</h4>
+                        <hr>
+                        <p class="text-success text-center"
+                           id="forgot-message"></p>
+                        <form id="forgot-form">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"> <i class="fa fa-user"></i> </span>
+                                    </div>
+                                    <input class="form-control"
+                                           id="forgot-phone"
+                                           placeholder="Email or phone" type="text"
+                                           required>
+                                    <div class="input-group-append"
+                                         id="forgot-send-code">
+                                        <span class="input-group-text"> <i
+                                                class="fa fa-code"></i> </span>
+                                    </div>
+                                </div> <!-- input-group.// -->
+                            </div> <!-- form-group// -->
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">
+                                            <i class="fa fa-code"></i></span>
+                                    </div>
+                                    <input id="forgot-code"
+                                           class="form-control"
+                                           placeholder="Verification code"
+                                           type="text"
+                                           required>
+                                </div> <!-- input-group.// -->
+                            </div> <!-- form-group// -->
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                                    </div>
+                                    <input name="password"
+                                           id="forgot-password"
+                                           class="form-control"
+                                           placeholder="Password"
+                                           type="password"
+                                           required>
+                                </div> <!-- input-group.// -->
+                            </div> <!-- form-group// -->
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text"> <i class="fa fa-lock"></i> </span>
+                                    </div>
+                                    <input name="password"
+                                           id="forgot-password-confirmation"
+                                           class="form-control"
+                                           placeholder="Password confirmation"
+                                           type="password"
+                                           required>
+                                </div> <!-- input-group.// -->
+                            </div> <!-- form-group// -->
+                            <div class="form-group">
+                                <button type="button"
+                                        onclick="onSubmitReset()"
+                                        class="btn btn-primary btn-block">Reset
+                                </button>
+                            </div> <!-- form-group// -->
+                        </form>
+                    </article>
+                </div> <!-- card.// -->
+            </aside>
+        </aside>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="//cdn.rawgit.com/placemarker/jQuery-MD5/master/jquery.md5.js"></script>
+<script type="text/javascript">
+    $("#forgot-send-code").on('click', () => {
+        const phone = $("#forgot-phone").val();
+        if (!phone|| !/\d{11}/.test(phone)) {
+            $("#forgot-message").html("Please enter a valid phone number.")
+                .removeClass("text-success").addClass("text-danger");
+            return;
+        }
+        $.ajax({
+            url: '/getSMSCode',
+            type: "POST",
+            data: JSON.stringify({
+                redisKeyVal: 1,
+                phone: phone
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(res) {
+                if (res.code === 1) {
+                    $("#register-message").html("Send code successfully")
+                        .removeClass("text-danger").addClass("text-success");
+                } else {
+                    $("#register-message").html("Send code failed. Please try again.")
+                        .removeClass("text-success").addClass("text-danger");
+                }
+            }
+        });
+    });
+
+    $("#register-send-code").on('click', () => {
+        if (!$("#register-phone").val() || !/\d{11}/.test($("#register-phone").val())) {
+            $("#register-message").html("Please enter a valid phone number.")
+                .removeClass("text-success").addClass("text-danger");
+            return;
+        }
+        $.ajax({
+            url: '/getSMSCode',
+            type: "POST",
+            data: JSON.stringify({
+                redisKeyVal: 0,
+                phone: $("#register-phone").val()
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(res) {
+                if (res.code === 1) {
+                    $("#register-message").html("Send code successfully")
+                        .removeClass("text-danger").addClass("text-success");
+                } else {
+                    $("#register-message").html("Send code failed. Please try again.")
+                        .removeClass("text-success").addClass("text-danger");
+                }
+            }
+        });
+    });
+    const onSubmitLogin = () => {
+        $.ajax({
+            url: '/login',
+            type:"POST",
+            data: JSON.stringify({
+                userName: $("#login-userName").val(),
+                password: $.md5($("#login-password").val())
+            }),
+            contentType:"application/json; charset=utf-8",
+            dataType:"json",
+            success: function(res) {
+                console.log(res);
+                if (res.code === 1) {
+                    $("#login-message").html("Login successful. Will now redirect...")
+                        .removeClass("text-danger").addClass("text-success");
+                    setTimeout(() => {
+                        window.location.href = "/shop/index";
+                    }, 1000)
+                } else {
+                    $("#login-message").html(res.data)
+                        .removeClass("text-success").addClass("text-danger");
+                }
+            }
+        });
+    }
+    const onSubmitRegister = () => {
+        if ($("#register-password").val() !==
+            $("#register-password-confirmation").val()) {
+            $("#register-message").html("Passwords do not match.").removeClass("text-success").addClass("text-danger");
+            return;
+        }
+        if (!/\d{11}/.test($("#register-phone").val())) {
+            $("#register-message").html("Phone format not correct.").removeClass("text-success").addClass("text-danger");
+            return;
+        }
+        $.ajax({
+            url: '/createUser',
+            type:"POST",
+            data: JSON.stringify({
+                userName: $("#register-userName").val(),
+                password: $.md5($("#register-password").val()),
+                phone: $("#register-phone").val(),
+                code: $("#register-code").val()
+            }),
+            contentType:"application/json; charset=utf-8",
+            dataType:"json",
+            success: function(res) {
+                console.log(res);
+                if (res.code === 1) {
+                    $("#register-message").html("Register successful. Please login.")
+                        .removeClass("text-danger").addClass("text-success");
+                } else {
+                    $("#register-message").html(res.data)
+                        .removeClass("text-success").addClass("text-danger");
+                }
+            }
+        });
+    }
+    const onSubmitReset = () => {
+        if ($("#forgot-password").val() !==
+            $("#forgot-password-confirmation").val()) {
+            $("#forgot-message").html("Passwords do not match.").removeClass("text-success").addClass("text-danger");
+            return;
+        }
+        $.ajax({
+            url: '/resetPassword',
+            type:"PUT",
+            data: JSON.stringify({
+                phone: $("#forgot-phone").val(),
+                password: $.md5($("#forgot-password").val()),
+                code: $("#forgot-code").val()
+            }),
+            contentType:"application/json; charset=utf-8",
+            dataType:"json",
+            success: function(res) {
+                console.log(res);
+                if (res.code === 1) {
+                    $("#forgot-message").html("Reset successfully.")
+                        .removeClass("text-danger").addClass("text-success");
+                } else {
+                    $("#forgot-message").html(res.data)
+                        .removeClass("text-success").addClass("text-danger");
+                }
+            }
+        });
+    }
+</script>
+</body>
+</html>

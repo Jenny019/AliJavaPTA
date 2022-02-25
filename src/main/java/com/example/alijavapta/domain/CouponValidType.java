@@ -4,16 +4,16 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class CouponValidType implements Serializable {
-    private String couponValidTypeID;
+    private int couponValidTypeID;
     private String title;
     private Date createdAt;
     private Date updatedAt;
 
-    public String getCouponValidTypeID() {
+    public int getCouponValidTypeID() {
         return couponValidTypeID;
     }
 
-    public void setCouponValidTypeID(String couponValidTypeID) {
+    public void setCouponValidTypeID(int couponValidTypeID) {
         this.couponValidTypeID = couponValidTypeID;
     }
 

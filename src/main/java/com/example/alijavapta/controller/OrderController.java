@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 
 @RestController
 @CrossOrigin(origins = "*")
+@RequestMapping(value = "/order")
 public class OrderController {
     @Resource
     private OrderMapper orderMapper;

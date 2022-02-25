@@ -21,7 +21,7 @@ public class Coupon implements Serializable {
     private BigInteger with_amount;
     private BigInteger used_amount;
     private int per_limit;
-    private int quota;
+    private BigInteger quota;
     private BigInteger take_count;
     private BigInteger used_count;
     private Date start_time;
@@ -31,6 +31,24 @@ public class Coupon implements Serializable {
     private User create_user;
     private User update_user;
     private CouponRecord record;
+    private long version;
+    private int count;
+
+    public int getCount() {
+        return count;
+    }
+
+    public void setCount(int count) {
+        this.count = count;
+    }
+
+    public long getVersion() {
+        return version;
+    }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
 
     public CouponRecord getRecord() {
         return record;
@@ -168,11 +186,11 @@ public class Coupon implements Serializable {
         this.per_limit = per_limit;
     }
 
-    public int getQuota() {
+    public BigInteger getQuota() {
         return quota;
     }
 
-    public void setQuota(int quota) {
+    public void setQuota(BigInteger quota) {
         this.quota = quota;
     }
 
