@@ -16,6 +16,7 @@ public interface ProductMapper {
     Product GetProduct(Product product);
     int UpdateProduct(Product product);
     int DeleteProduct(Product product);
+    int UpdateProductStock(Product product);
 
     int CreateProductVariant(ProductVariant variant);
     int UpdateProductVariant(ProductVariant variant);

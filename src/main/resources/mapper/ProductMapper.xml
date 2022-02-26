@@ -6,6 +6,7 @@
     <resultMap type="com.example.alijavapta.domain.Product" id="productMap">
         <id property="productID" column="productID"/>
         <result property="title" column="title"/>
+        <result property="stock" column="stock"/>
         <result property="description" column="description"/>
         <result property="image" column="image"/>
         <result property="status" column="productStatus"/>
@@ -189,6 +190,12 @@
             </if>
         </trim>
         WHERE productID = #{productID}
+    </update>
+    <update id="UpdateProductStock"
+            parameterType="com.example.alijavapta.domain.Product"
+    >
+        UPDATE products SET stock = stock + #{addStock} WHERE productID =
+                                                              #{productID}
     </update>
     <update id="DeleteProduct" parameterType="com.example.alijavapta.domain.Product">
         UPDATE products SET status = 2 WHERE productID = #{productID};

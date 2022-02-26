@@ -14,6 +14,24 @@ public class Product implements Serializable {
     private Date updatedAt;
     private int status = -1; // 0 待上架 1 上架 2 删除
     private List<ProductVariant> variantList;
+    private int stock;
+    private int addStock;
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public int getAddStock() {
+        return addStock;
+    }
+
+    public void setAddStock(int addStock) {
+        this.addStock = addStock;
+    }
 
     public List<ProductVariant> getVariantList() {
         return variantList;

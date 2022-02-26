@@ -1,5 +1,7 @@
 package com.example.alijavapta.controller;
 
+import com.example.alijavapta.config.CouponRecordStatus;
+import com.example.alijavapta.config.RedisDistributeLock;
 import com.example.alijavapta.config.ResponseCode;
 import com.example.alijavapta.domain.*;
 import com.example.alijavapta.mapper.my.ProductMapper;
@@ -8,7 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import java.math.BigInteger;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping(value = "/product")
@@ -16,6 +22,8 @@ import java.util.List;
 public class ProductController {
     @Resource
     private ProductMapper productMapper;
+    @Resource
+    private RedisDistributeLock redisDistributeLock;
 
     @GetMapping(value = "/category/{categoryID}")
     public ModelAndView getAllProduct(@PathVariable int categoryID) {
@@ -82,60 +90,46 @@ public class ProductController {
     @PutMapping("/updateProduct")
     public Response updateProduct(@RequestBody Product product) {
         try {
+
             productMapper.UpdateProduct(product);
-            List<ProductVariant> variantList = product.getVariantList();
-            if (variantList.size() > 0 && variantList.get(0).getValue() != null) {
-                productMapper.DeleteAllProductVariants(product);
-                String[] values1 = variantList.get(0).getValue().split(",");
-                for (String v1 : values1) {
-                    if (variantList.size() > 1 && variantList.get(1).getValue() != null) {
-                        String[] values2 =
-                                variantList.get(1).getValue().split(",");
-                        for (String v2 : values2) {
-                            if (variantList.size() > 2 && variantList.get(2).getValue() != null) {
-                                String[] values3 =
-                                        variantList.get(2).getValue().split(
-                                                ",");
-                                for (String v3 : values3) {
-                                    ProductVariant pv = new ProductVariant();
-                                    pv.setName1(variantList.get(0).getName());
-                                    pv.setValue1(v1);
-                                    pv.setName2(variantList.get(1).getName());
-                                    pv.setValue2(v2);
-                                    pv.setName3(variantList.get(2).getName());
-                                    pv.setValue3(v3);
-                                    pv.setProduct(product);
-
-                                    productMapper.CreateProductVariant(pv);
-                                }
-
-                            } else {
-                                ProductVariant pv = new ProductVariant();
-                                pv.setName1(variantList.get(0).getName());
-                                pv.setValue1(v1);
-                                pv.setName2(variantList.get(1).getName());
-                                pv.setValue2(v2);
-                                pv.setProduct(product);
-
-                                productMapper.CreateProductVariant(pv);
-                            }
-                        }
-                    } else {
-                        ProductVariant pv = new ProductVariant();
-                        pv.setName1(variantList.get(0).getName());
-                        pv.setValue1(v1);
-                        pv.setProduct(product);
-
-                        productMapper.CreateProductVariant(pv);
-                    }
-                }
-            }
             return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", 0,
                     product);
         } catch (Exception ex) {
             return new Response(ResponseCode.FAIL.ordinal(), "FAIL", 0,
                     ex.getMessage());
         }
+    }
+
+    @PutMapping("/addProductStock")
+    public Response addProductStock(@RequestBody Product product) {
+        String uuid = UUID.randomUUID().toString();
+        try {
+            boolean lock =
+                    redisDistributeLock.tryLock("PRODUCT_" + product.getProductID(),
+                            uuid, 5, TimeUnit.SECONDS);
+            if (lock) {
+                int count = productMapper.UpdateProductStock(product);
+                if (count > 0) {
+                    return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS", 0,
+                            product);
+                } else {
+                    return new Response(ResponseCode.FAIL.ordinal(),
+                            "FAIL", 0,
+                            "更新库存失败，请重试");
+                }
+            } else {
+                System.out.println("fail to get redis lock, wait next time");
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            // 释放锁
+            redisDistributeLock.releaseLock("PRODUCT" + product.getProductID(),
+                    uuid);
+        }
+        return new Response(ResponseCode.FAIL.ordinal(),
+                "FAIL", 0,
+                "更新库存失败，请重试");
     }
 
     @PostMapping("/createProduct")
