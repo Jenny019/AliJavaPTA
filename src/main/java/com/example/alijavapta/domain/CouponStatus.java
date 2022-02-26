@@ -4,16 +4,16 @@ import java.io.Serializable;
 import java.util.Date;
 
 public class CouponStatus implements Serializable {
-    private String couponStatusID;
+    private int couponStatusID;
     private String title;
     private Date createdAt;
     private Date updatedAt;
 
-    public String getCouponStatusID() {
+    public int getCouponStatusID() {
         return couponStatusID;
     }
 
-    public void setCouponStatusID(String couponStatusID) {
+    public void setCouponStatusID(int couponStatusID) {
         this.couponStatusID = couponStatusID;
     }
 

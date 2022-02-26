@@ -10,6 +10,7 @@ public interface CouponMapper {
 
     List<Coupon> ListAllCoupons(Condition condition);
     List<CouponRecord> ListCoupons(Condition condition);
+    List<CouponRecord> ListAllCouponRecords(Condition condition);
 
     Coupon GetCoupon(Coupon coupon);
     int CreateCoupon(Coupon coupon);
@@ -20,4 +21,5 @@ public interface CouponMapper {
     int InsertCouponRecord(CouponRecord record);
     int GetCouponRecordsCount(Condition condition);
     int UpdateCouponRecord(CouponRecord record);
+    CouponRecord GetSingleCouponRecord(CouponRecord record);
 }

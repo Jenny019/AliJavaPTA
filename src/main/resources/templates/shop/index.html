@@ -39,7 +39,7 @@
     <div th:each="coupon: ${coupons}" style="padding: .85vw">
         <a style="text-decoration: none; color: white;"
            class="shopIndex__text"
-           th:href="${coupon.count == 0? '/coupon/' + coupon.couponID: 'javascript:void(0)'}">
+           th:href="${'/coupon/' + coupon.couponID}">
             <div
                     th:style="'background-color: ' + ${coupon.count == 0? 'red': 'gray'} +'; width: 15vw; height: 8vw;'"
                  class="d-flex flex-sm-column justify-content-center align-items-center position-relative">

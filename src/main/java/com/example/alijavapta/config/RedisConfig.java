@@ -20,6 +20,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
+import redis.clients.jedis.Jedis;
 import redis.clients.jedis.JedisPoolConfig;
 
 import java.util.HashMap;
@@ -85,8 +86,8 @@ public class RedisConfig {
      */
     @Primary
     @Bean(name = "redisTemplate")
-    public RedisTemplate<String, String> redisTemplate(RedisConnectionFactory factory) {
-        RedisTemplate<String, String> redisTemplate = new RedisTemplate<String, String>();
+    public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
+        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(jedisConnectionFactory());
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setDefaultSerializer(new GenericJackson2JsonRedisSerializer());
@@ -96,6 +97,11 @@ public class RedisConfig {
     @Bean
     IGlobalCache cache(RedisTemplate redisTemplate) {
         return new AppRedisCacheManager(redisTemplate);
+    }
+
+    @Bean
+    Jedis jedis() {
+        return new Jedis();
     }
 
 }

@@ -5,7 +5,7 @@
   <title>Title</title>
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
-<style type="text/css">
+<style>
   .couponIndex__half-circle {
     width: 2vw;
     height: 2vw;
@@ -40,7 +40,7 @@
        class="couponIndex__text">
       <div
               class="d-sm-flex flex-column justify-content-center align-items-center position-relative"
-           style="background-color: red; width: 15vw; height: 8vw;">
+              style="background-color: red; width: 15vw; height: 8vw;">
         <div class="couponIndex__half-circle" style="left: -1vw;"></div>
         <div class="couponIndex__half-circle" style="right: -1vw;"></div>
         <div th:text="${coupon.title}"></div>
@@ -50,7 +50,8 @@
                 th:text="${(coupon.with_sn == '' or coupon.with_sn == null)? '全场通用': ''}"></div>
       </div>
     </div>
-    <a href="javascript: receiveCoupon()">领取优惠券</a>
+    <a href="javascript: receiveCoupon()">领取优惠券</a><br>
+    <a href="javascript: useCoupon()">使用优惠券</a>
 </div>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
@@ -64,6 +65,26 @@
         userID: [[${session.userInfo.id}]],
         code: [[${code}]],
         couponID: [[${coupon.couponID}]],
+      }),
+      contentType: "application/json; charset=utf-8",
+      dataType: "json",
+      success: function (res) {
+        if (res.code === 1) {
+
+        } else {
+
+        }
+      }
+    });
+  }
+
+  function useCoupon() {
+    $.ajax({
+      url: '/coupon/useCoupon',
+      type: "POST",
+      data: JSON.stringify({
+        userID: [[${session.userInfo.id}]],
+        couponID: [[${coupon.couponID}]]
       }),
       contentType: "application/json; charset=utf-8",
       dataType: "json",

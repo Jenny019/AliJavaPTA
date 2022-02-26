@@ -1,5 +1,7 @@
 package com.example.alijavapta.controller;
 
+import com.example.alijavapta.config.CouponRecordStatus;
+import com.example.alijavapta.config.RedisDistributeLock;
 import com.example.alijavapta.config.ResponseCode;
 import com.example.alijavapta.domain.*;
 import com.example.alijavapta.mapper.my.CouponMapper;
@@ -7,8 +9,6 @@ import com.example.alijavapta.mapper.my.RedisService;
 import com.example.alijavapta.utils.SMSService;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.subject.Subject;
-import org.checkerframework.checker.units.qual.C;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -20,6 +20,8 @@ import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 @RestController()
 @CrossOrigin(origins = "*")
@@ -28,8 +30,11 @@ public class CouponController {
     @Resource
     private CouponMapper couponMapper;
 
-    @Autowired
+    @Resource
     private RedisService redisService;
+
+    @Resource
+    private RedisDistributeLock redisDistributeLock;
 
     @PostMapping(value = "/receiveCoupon")
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor =
@@ -93,22 +98,49 @@ public class CouponController {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor =
             Exception.class, value = "myTransactionManager")
     public Response useCoupon(@RequestBody CouponRecord record) {
-        Coupon coupon = record.getCoupon();
-        coupon.setUsed_count(coupon.getUsed_count().add(BigInteger.valueOf(1)));
-        int count = couponMapper.UpdateCoupon(coupon);
-        if (count > 0) {
-            record.setUse_time(new Date());
-            record.setUse_status(1);
-            count = couponMapper.UpdateCouponRecord(record);
-            if (count > 0) {
-                return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
-                        0, record);
-            } else {
-                throw new RuntimeException("更新优惠券记录失败");
-            }
-        } else {
-            throw new RuntimeException("更新优惠券失败");
+        String uuid = UUID.randomUUID().toString();
+        record.setUser((User) SecurityUtils.getSubject().getPrincipal());
+        record = couponMapper.GetSingleCouponRecord(record);
+        if (record == null) {
+            return new Response(ResponseCode.FAIL.ordinal(), "FAIL", 0,
+                    "您没有该优惠券");
         }
+        try {
+            // 获取锁
+            Coupon coupon = new Coupon();
+            coupon.setCouponID(record.getCoupon().getCouponID());
+            coupon = couponMapper.GetCoupon(coupon);
+            boolean lock =
+                    redisDistributeLock.tryLock("COUPON_" + coupon.getCouponID(),
+                            uuid, 5, TimeUnit.SECONDS);
+            if (lock) {
+                coupon.setUsed_count(coupon.getUsed_count().add(BigInteger.valueOf(1)));
+                int count = couponMapper.UpdateCoupon(coupon);
+                if (count > 0) {
+                    record.setUse_time(new Date());
+                    record.setUse_status(CouponRecordStatus.USED.getValue());
+                    count = couponMapper.UpdateCouponRecord(record);
+                    if (count > 0) {
+                        return new Response(ResponseCode.SUCCESS.ordinal(), "SUCCESS",
+                                0, record);
+                    } else {
+                        throw new RuntimeException("更新优惠券记录失败");
+                    }
+                } else {
+                    throw new RuntimeException("更新优惠券失败");
+                }
+            } else {
+                System.out.println("fail to get redis lock, wait next time");
+            }
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+        } finally {
+            // 释放锁
+            redisDistributeLock.releaseLock("COUPON_RECORD_" + record.getCouponRecordID(),
+                    uuid);
+        }
+        return new Response(ResponseCode.FAIL.ordinal(), "FAIL",
+                0, null);
     }
 
     @PostMapping(value = "/findAllCoupons")

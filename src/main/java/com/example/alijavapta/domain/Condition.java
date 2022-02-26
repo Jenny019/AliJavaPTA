@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 public class Condition {
+    private Date validEndTime;
     private String userID;
     private String couponID;
     private String code;
@@ -25,6 +26,14 @@ public class Condition {
     private int redisKeyVal = -1;
     private int transactionType = -1;
     private String sign;
+
+    public Date getValidEndTime() {
+        return validEndTime;
+    }
+
+    public void setValidEndTime(Date validEndTime) {
+        this.validEndTime = validEndTime;
+    }
 
     public String getCouponID() {
         return couponID;

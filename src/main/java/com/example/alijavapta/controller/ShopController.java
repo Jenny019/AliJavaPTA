@@ -37,7 +37,7 @@ public class ShopController {
         couponCondition.setUserID(((User) currUser.getPrincipal()).getId());
         couponCondition.setStartDate(new Date());
         couponCondition.setEndDate(new Date());
-        couponCondition.setStatus(1);
+//        couponCondition.setStatus(1);
         List<Coupon> couponList = couponMapper.ListAllCouponsWithStates(couponCondition);
         mv.addObject("categories", productCategoryList);
         mv.addObject("coupons", couponList);

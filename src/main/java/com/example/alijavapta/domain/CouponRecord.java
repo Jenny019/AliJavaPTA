@@ -14,6 +14,15 @@ public class CouponRecord implements Serializable {
     private Date createdAt;
     private Coupon coupon;
     private Date updatedAt;
+    private String couponID;
+
+    public String getCouponID() {
+        return couponID;
+    }
+
+    public void setCouponID(String couponID) {
+        this.couponID = couponID;
+    }
 
     public Date getValid_start_time() {
         return valid_start_time;
